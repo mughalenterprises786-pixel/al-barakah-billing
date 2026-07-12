@@ -1,7 +1,6 @@
-
 # ============================================================
 # AL-BARAKAH ENTERPRISES
-# BILLING SOFTWARE 2026 - STREAMLIT VERSION
+# BILLING SOFTWARE 2026 - WITH KEYBOARD SUPPORT
 # ============================================================
 
 import streamlit as st
@@ -20,7 +19,7 @@ COMPANY_NAME = "AL-BARAKAH ENTERPRISES"
 DATA_FILE = "billing_database.json"
 
 # ============================================================
-# PRODUCT LIST (1-33)
+# PRODUCT LIST
 # ============================================================
 
 PRODUCTS = [
@@ -74,6 +73,9 @@ def init_session():
     
     if 'selected_product' not in st.session_state:
         st.session_state.selected_product = None
+    
+    if 'focus_field' not in st.session_state:
+        st.session_state.focus_field = "shop"
 
 def save_database():
     try:
@@ -97,7 +99,6 @@ def export_bill_excel(shop_name):
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet("Bill")
     
-    # Page Setup
     worksheet.set_paper(9)
     worksheet.set_portrait()
     worksheet.fit_to_pages(1, 1)
@@ -112,13 +113,11 @@ def export_bill_excel(shop_name):
     worksheet.set_column("H:H", 12)
     worksheet.set_column("I:I", 16)
     
-    # Formats
     title = workbook.add_format({"bold": True, "font_size": 18, "align": "center", "border": 2})
     header = workbook.add_format({"bold": True, "bg_color": "#D9EAD3", "align": "center", "border": 2})
     cell = workbook.add_format({"border": 1, "align": "center"})
     total = workbook.add_format({"bold": True, "bg_color": "#FFF2CC", "align": "center", "border": 2})
     
-    # Company Header
     worksheet.merge_range("A1:I1", COMPANY_NAME, title)
     
     first_bill = shop_bills[0]
@@ -131,14 +130,12 @@ def export_bill_excel(shop_name):
     worksheet.write("G4", "Date", header)
     worksheet.write("H4", first_bill["Date"], cell)
     
-    # Table Header
     row = 6
     headers = ["Product", "Code", "Cartons", "Boxes", "TP/Carton", "TP/Box", "Gross", "Discount %", "Net"]
     for col, value in enumerate(headers):
         worksheet.write(row, col, value, header)
     row += 1
     
-    # Data
     gross_total = 0
     box_total = 0
     for bill in shop_bills:
@@ -158,7 +155,6 @@ def export_bill_excel(shop_name):
         box_total += bill["Boxes"]
         row += 1
     
-    # Total Row
     worksheet.write(row, 2, "TOTAL", total)
     worksheet.write(row, 3, box_total, total)
     worksheet.write(row, 6, gross_total, total)
@@ -222,13 +218,100 @@ def export_load_form_excel(booker):
     return output
 
 # ============================================================
+# CUSTOM CSS FOR KEYBOARD NAVIGATION
+# ============================================================
+
+def add_keyboard_css():
+    st.markdown("""
+    <style>
+    /* Highlight focused input */
+    input:focus, textarea:focus {
+        border: 2px solid #2d8a4e !important;
+        box-shadow: 0 0 10px rgba(45, 138, 78, 0.3) !important;
+        outline: none !important;
+    }
+    
+    /* Button hover effect */
+    .stButton button:hover {
+        transform: scale(1.02);
+        transition: 0.2s;
+    }
+    
+    /* Keyboard shortcut hint */
+    .keyboard-hint {
+        font-size: 12px;
+        color: #666;
+        background: #f0f0f0;
+        padding: 4px 8px;
+        border-radius: 4px;
+        display: inline-block;
+        margin: 2px;
+    }
+    
+    /* Enter key hint */
+    .enter-hint {
+        background: #2d8a4e;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+    }
+    </style>
+    
+    <!-- Keyboard Navigation Script -->
+    <script>
+    document.addEventListener('keydown', function(e) {
+        // Enter key on any field - trigger Add Bill
+        if (e.key === 'Enter') {
+            var active = document.activeElement;
+            if (active && active.tagName === 'INPUT') {
+                // Find the Add Bill button and click it
+                var buttons = document.querySelectorAll('button');
+                for (var btn of buttons) {
+                    if (btn.textContent.includes('Add Bill')) {
+                        btn.click();
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Escape key - refresh
+        if (e.key === 'Escape') {
+            var buttons = document.querySelectorAll('button');
+            for (var btn of buttons) {
+                if (btn.textContent.includes('Refresh Bill')) {
+                    btn.click();
+                    break;
+                }
+            }
+        }
+    });
+    </script>
+    
+    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+        <span class="keyboard-hint">⬆⬇ Arrow Keys</span>
+        <span class="keyboard-hint">↹ Tab</span>
+        <span class="enter-hint">↵ Enter = Add Bill</span>
+        <span class="keyboard-hint">⎋ Esc = Refresh</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ============================================================
 # MAIN APP
 # ============================================================
 
 def main():
     init_session()
     
-    st.set_page_config(page_title=f"{COMPANY_NAME} - Billing", page_icon="🧾", layout="wide")
+    st.set_page_config(
+        page_title=f"{COMPANY_NAME} - Billing",
+        page_icon="🧾",
+        layout="wide"
+    )
+    
+    # Add keyboard CSS
+    add_keyboard_css()
     
     # Header
     st.markdown(f"""
@@ -241,23 +324,33 @@ def main():
     
     st.markdown("---")
     
-    # Bill Information
+    # ============================================================
+    # BILL INFORMATION
+    # ============================================================
+    
     col1, col2 = st.columns(2)
     with col1:
         st.text_input("Bill No:", value=st.session_state.database["next_bill_no"], disabled=True)
     with col2:
         st.text_input("Date:", value=datetime.now().strftime("%d-%m-%Y"), disabled=True)
     
-    # Customer Information
-    shop_name = st.text_input("Shop:", placeholder="Enter Shop Name")
-    order_booker = st.text_input("Booker:", placeholder="Enter Order Booker")
-    salesman = st.text_input("Salesman:", placeholder="Enter Salesman")
-    delivery_man = st.text_input("Delivery:", placeholder="Enter Delivery Man")
+    # ============================================================
+    # CUSTOMER INFORMATION - WITH KEYBOARD SUPPORT
+    # ============================================================
+    
+    # Using key parameter for tab order
+    shop_name = st.text_input("🏪 Shop:", placeholder="Enter Shop Name", key="shop_input")
+    order_booker = st.text_input("📝 Booker:", placeholder="Enter Order Booker", key="booker_input")
+    salesman = st.text_input("👤 Salesman:", placeholder="Enter Salesman", key="salesman_input")
+    delivery_man = st.text_input("🚚 Delivery:", placeholder="Enter Delivery Man", key="delivery_input")
     
     st.markdown("---")
     
-    # Product Selection
-    code = st.text_input("Code:", placeholder="Product Code")
+    # ============================================================
+    # PRODUCT SELECTION
+    # ============================================================
+    
+    code = st.text_input("🔢 Code:", placeholder="Product Code", key="code_input")
     
     if code:
         product = next((p for p in PRODUCTS if p["code"] == code), None)
@@ -271,14 +364,20 @@ def main():
         st.session_state.selected_product = None
         st.markdown("<b style='color:red;'>No Product Selected</b>", unsafe_allow_html=True)
     
-    # Quantities
+    # ============================================================
+    # QUANTITIES
+    # ============================================================
+    
     col1, col2 = st.columns(2)
     with col1:
-        cartons = st.number_input("Cartons:", min_value=0, value=0, step=1)
+        cartons = st.number_input("📦 Cartons:", min_value=0, value=0, step=1, key="cartons_input")
     with col2:
-        boxes = st.number_input("Boxes:", min_value=0, value=0, step=1)
+        boxes = st.number_input("📦 Boxes:", min_value=0, value=0, step=1, key="boxes_input")
     
-    # Prices (Editable)
+    # ============================================================
+    # PRICES (Editable)
+    # ============================================================
+    
     default_tp_box = 0.0
     default_tp_carton = 0.0
     if st.session_state.selected_product:
@@ -287,35 +386,41 @@ def main():
     
     col1, col2 = st.columns(2)
     with col1:
-        tp_carton = st.number_input("TP/Carton:", min_value=0.0, value=default_tp_carton, step=1.0, format="%.2f")
+        tp_carton = st.number_input("💰 TP/Carton:", min_value=0.0, value=default_tp_carton, step=1.0, format="%.2f", key="tpcarton_input")
     with col2:
-        tp_box = st.number_input("TP/Box:", min_value=0.0, value=default_tp_box, step=1.0, format="%.2f")
+        tp_box = st.number_input("💰 TP/Box:", min_value=0.0, value=default_tp_box, step=1.0, format="%.2f", key="tpbox_input")
     
-    # Bill Total
+    # ============================================================
+    # BILL TOTAL
+    # ============================================================
+    
     col1, col2, col3 = st.columns(3)
     with col1:
-        discount = st.number_input("Discount %:", min_value=0.0, max_value=100.0, value=0.0, step=0.5, format="%.1f")
+        discount = st.number_input("🎯 Discount %:", min_value=0.0, max_value=100.0, value=0.0, step=0.5, format="%.1f", key="discount_input")
     
     gross_total = (boxes * tp_box) + (cartons * tp_carton)
     discount_amount = gross_total * (discount / 100)
     net_total = gross_total - discount_amount
     
     with col2:
-        st.text_input("Gross:", value=f"₹{gross_total:,.2f}", disabled=True)
+        st.text_input("💰 Gross:", value=f"₹{gross_total:,.2f}", disabled=True, key="gross_display")
     with col3:
-        st.text_input("Net:", value=f"₹{net_total:,.2f}", disabled=True)
+        st.text_input("✅ Net:", value=f"₹{net_total:,.2f}", disabled=True, key="net_display")
     
     st.markdown("---")
     
-    # Buttons
+    # ============================================================
+    # BUTTONS
+    # ============================================================
+    
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🧮 Calculate", use_container_width=True):
+        if st.button("🧮 Calculate", use_container_width=True, key="calc_btn"):
             st.success("✅ Calculation Completed")
     
     with col2:
-        if st.button("➕ Add Bill", use_container_width=True, type="primary"):
+        if st.button("➕ Add Bill (Enter)", use_container_width=True, type="primary", key="add_btn"):
             if st.session_state.selected_product and (cartons > 0 or boxes > 0):
                 bill = {
                     "Bill No": st.session_state.database["next_bill_no"],
@@ -346,15 +451,18 @@ def main():
                 st.error("❌ Please select a product and enter quantity")
     
     with col3:
-        if st.button("🔄 Refresh Bill", use_container_width=True):
+        if st.button("🔄 Refresh (Esc)", use_container_width=True, key="refresh_btn"):
             st.rerun()
     
-    # Export Buttons
+    # ============================================================
+    # EXPORT BUTTONS
+    # ============================================================
+    
     st.markdown("---")
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("📄 Export Bill (Excel)", use_container_width=True):
+        if st.button("📄 Export Bill (Excel)", use_container_width=True, key="export_bill_btn"):
             if shop_name.strip() == "":
                 st.error("❌ Please enter Shop Name first")
             else:
@@ -370,7 +478,7 @@ def main():
                     st.error(f"❌ No bills found for: {shop_name}")
     
     with col2:
-        if st.button("📦 Export Load Form (Excel)", use_container_width=True):
+        if st.button("📦 Export Load Form (Excel)", use_container_width=True, key="export_load_btn"):
             if order_booker.strip() == "":
                 st.error("❌ Please enter Order Booker name")
             else:
@@ -386,7 +494,7 @@ def main():
                     st.error(f"❌ No bills found for: {order_booker}")
     
     with col3:
-        if st.button("🗑 Refresh Load Form", use_container_width=True):
+        if st.button("🗑 Refresh Load Form", use_container_width=True, key="refresh_load_btn"):
             if order_booker.strip() == "":
                 st.error("❌ Please enter Order Booker name")
             else:
@@ -396,20 +504,29 @@ def main():
                 st.success(f"✅ Load form cleared for: {order_booker}")
                 st.rerun()
     
-    # Show Bills
+    # ============================================================
+    # SHOW BILLS
+    # ============================================================
+    
     st.markdown("---")
-    if st.button("📋 Show Bills", use_container_width=True):
+    if st.button("📋 Show Bills", use_container_width=True, key="show_bills_btn"):
         if st.session_state.database["bills"]:
             df = pd.DataFrame(st.session_state.database["bills"])
             st.dataframe(df, use_container_width=True)
         else:
             st.info("No bills found")
     
-    # Footer
+    # ============================================================
+    # FOOTER
+    # ============================================================
+    
     st.markdown("---")
     st.markdown(f"""
     <div style="text-align: center; color: #666;">
         <p>Products: {len(PRODUCTS)} | Bills: {len(st.session_state.database['bills'])} | Next Bill: {st.session_state.database['next_bill_no']}</p>
+        <p style="font-size: 12px; margin-top: 5px;">
+            ⌨️ Tab: Next Field | Enter: Add Bill | Esc: Refresh
+        </p>
     </div>
     """, unsafe_allow_html=True)
 
