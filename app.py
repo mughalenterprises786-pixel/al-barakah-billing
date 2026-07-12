@@ -1,6 +1,6 @@
 # ============================================================
 # AL-BARAKAH ENTERPRISES
-# BILLING SOFTWARE 2026 - WITH KEYBOARD SUPPORT
+# BILLING SOFTWARE 2026 - WITH AUTO PRICE FILL
 # ============================================================
 
 import streamlit as st
@@ -74,9 +74,11 @@ def init_session():
     if 'selected_product' not in st.session_state:
         st.session_state.selected_product = None
     
-    # Store current product price for auto-fill
-    if 'current_price' not in st.session_state:
-        st.session_state.current_price = 0.0
+    # Store price for auto-fill
+    if 'tp_box_value' not in st.session_state:
+        st.session_state.tp_box_value = 0.0
+    if 'tp_carton_value' not in st.session_state:
+        st.session_state.tp_carton_value = 0.0
 
 def save_database():
     try:
@@ -219,7 +221,7 @@ def export_load_form_excel(booker):
     return output
 
 # ============================================================
-# CUSTOM CSS FOR KEYBOARD NAVIGATION
+# CSS FOR KEYBOARD
 # ============================================================
 
 def add_keyboard_css():
@@ -280,7 +282,7 @@ def add_keyboard_css():
     
     <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
         <span class="keyboard-hint">⬆⬇ Arrow Keys</span>
-        <span class="keyboard-hint">↹ Tab</span>
+        <span class="keyboard-hint">↹ Tab / Shift+Tab</span>
         <span class="enter-hint">↵ Enter = Add Bill</span>
         <span class="keyboard-hint">⎋ Esc = Refresh</span>
     </div>
@@ -337,22 +339,25 @@ def main():
     # PRODUCT SELECTION - WITH AUTO PRICE FILL
     # ============================================================
     
+    # Product Code
     code = st.text_input("🔢 Code:", placeholder="Product Code", key="code_input")
     
-    # Auto-fill price when product is found
+    # Find product and set price
     if code:
         product = next((p for p in PRODUCTS if p["code"] == code), None)
         if product:
             st.session_state.selected_product = product
-            st.session_state.current_price = float(product["price"])
+            # Store prices in session state
+            st.session_state.tp_box_value = float(product["price"])
+            st.session_state.tp_carton_value = float(product["price"] * 12)
             st.markdown(f"<h4 style='color:green;margin:0;'>✅ {product['name']}</h4>", unsafe_allow_html=True)
         else:
             st.session_state.selected_product = None
-            st.session_state.current_price = 0.0
+            st.session_state.tp_box_value = 0.0
+            st.session_state.tp_carton_value = 0.0
             st.markdown("<b style='color:red;'>❌ Product Not Found</b>", unsafe_allow_html=True)
     else:
         st.session_state.selected_product = None
-        st.session_state.current_price = 0.0
         st.markdown("<b style='color:red;'>⚠️ No Product Selected</b>", unsafe_allow_html=True)
     
     # ============================================================
@@ -366,19 +371,16 @@ def main():
         boxes = st.number_input("📦 Boxes:", min_value=0, value=0, step=1, key="boxes_input")
     
     # ============================================================
-    # PRICES (Editable) - AUTO FILL FROM PRODUCT
+    # PRICES (Editable) - AUTO FILL FROM SESSION STATE
     # ============================================================
     
-    # Auto-fill price if product selected
-    default_tp_box = st.session_state.current_price
-    default_tp_carton = default_tp_box * 12
-    
+    # Use session state values for auto-fill
     col1, col2 = st.columns(2)
     with col1:
         tp_carton = st.number_input(
             "💰 TP/Carton:", 
             min_value=0.0, 
-            value=default_tp_carton, 
+            value=st.session_state.tp_carton_value, 
             step=1.0, 
             format="%.2f", 
             key="tpcarton_input"
@@ -387,11 +389,16 @@ def main():
         tp_box = st.number_input(
             "💰 TP/Box:", 
             min_value=0.0, 
-            value=default_tp_box, 
+            value=st.session_state.tp_box_value, 
             step=1.0, 
             format="%.2f", 
             key="tpbox_input"
         )
+    
+    # Update session state if user manually edits
+    if tp_box != st.session_state.tp_box_value:
+        st.session_state.tp_box_value = tp_box
+        st.session_state.tp_carton_value = tp_box * 12
     
     # ============================================================
     # BILL TOTAL
@@ -449,12 +456,19 @@ def main():
                 
                 st.success(f"✅ Bill Added Successfully! Bill No: {bill['Bill No']}")
                 st.balloons()
+                # Reset product selection
+                st.session_state.selected_product = None
+                st.session_state.tp_box_value = 0.0
+                st.session_state.tp_carton_value = 0.0
                 st.rerun()
             else:
                 st.error("❌ Please select a product and enter quantity")
     
     with col3:
         if st.button("🔄 Refresh (Esc)", use_container_width=True, key="refresh_btn"):
+            st.session_state.selected_product = None
+            st.session_state.tp_box_value = 0.0
+            st.session_state.tp_carton_value = 0.0
             st.rerun()
     
     # ============================================================
