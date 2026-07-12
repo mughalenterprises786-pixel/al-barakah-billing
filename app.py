@@ -74,8 +74,9 @@ def init_session():
     if 'selected_product' not in st.session_state:
         st.session_state.selected_product = None
     
-    if 'focus_field' not in st.session_state:
-        st.session_state.focus_field = "shop"
+    # Store current product price for auto-fill
+    if 'current_price' not in st.session_state:
+        st.session_state.current_price = 0.0
 
 def save_database():
     try:
@@ -224,20 +225,15 @@ def export_load_form_excel(booker):
 def add_keyboard_css():
     st.markdown("""
     <style>
-    /* Highlight focused input */
     input:focus, textarea:focus {
         border: 2px solid #2d8a4e !important;
         box-shadow: 0 0 10px rgba(45, 138, 78, 0.3) !important;
         outline: none !important;
     }
-    
-    /* Button hover effect */
     .stButton button:hover {
         transform: scale(1.02);
         transition: 0.2s;
     }
-    
-    /* Keyboard shortcut hint */
     .keyboard-hint {
         font-size: 12px;
         color: #666;
@@ -247,8 +243,6 @@ def add_keyboard_css():
         display: inline-block;
         margin: 2px;
     }
-    
-    /* Enter key hint */
     .enter-hint {
         background: #2d8a4e;
         color: white;
@@ -258,14 +252,11 @@ def add_keyboard_css():
     }
     </style>
     
-    <!-- Keyboard Navigation Script -->
     <script>
     document.addEventListener('keydown', function(e) {
-        // Enter key on any field - trigger Add Bill
         if (e.key === 'Enter') {
             var active = document.activeElement;
             if (active && active.tagName === 'INPUT') {
-                // Find the Add Bill button and click it
                 var buttons = document.querySelectorAll('button');
                 for (var btn of buttons) {
                     if (btn.textContent.includes('Add Bill')) {
@@ -275,8 +266,6 @@ def add_keyboard_css():
                 }
             }
         }
-        
-        // Escape key - refresh
         if (e.key === 'Escape') {
             var buttons = document.querySelectorAll('button');
             for (var btn of buttons) {
@@ -310,7 +299,6 @@ def main():
         layout="wide"
     )
     
-    # Add keyboard CSS
     add_keyboard_css()
     
     # Header
@@ -335,10 +323,9 @@ def main():
         st.text_input("Date:", value=datetime.now().strftime("%d-%m-%Y"), disabled=True)
     
     # ============================================================
-    # CUSTOMER INFORMATION - WITH KEYBOARD SUPPORT
+    # CUSTOMER INFORMATION
     # ============================================================
     
-    # Using key parameter for tab order
     shop_name = st.text_input("🏪 Shop:", placeholder="Enter Shop Name", key="shop_input")
     order_booker = st.text_input("📝 Booker:", placeholder="Enter Order Booker", key="booker_input")
     salesman = st.text_input("👤 Salesman:", placeholder="Enter Salesman", key="salesman_input")
@@ -347,22 +334,26 @@ def main():
     st.markdown("---")
     
     # ============================================================
-    # PRODUCT SELECTION
+    # PRODUCT SELECTION - WITH AUTO PRICE FILL
     # ============================================================
     
     code = st.text_input("🔢 Code:", placeholder="Product Code", key="code_input")
     
+    # Auto-fill price when product is found
     if code:
         product = next((p for p in PRODUCTS if p["code"] == code), None)
         if product:
             st.session_state.selected_product = product
-            st.markdown(f"<h4 style='color:green;margin:0;'>{product['name']}</h4>", unsafe_allow_html=True)
+            st.session_state.current_price = float(product["price"])
+            st.markdown(f"<h4 style='color:green;margin:0;'>✅ {product['name']}</h4>", unsafe_allow_html=True)
         else:
             st.session_state.selected_product = None
-            st.markdown("<b style='color:red;'>Product Not Found</b>", unsafe_allow_html=True)
+            st.session_state.current_price = 0.0
+            st.markdown("<b style='color:red;'>❌ Product Not Found</b>", unsafe_allow_html=True)
     else:
         st.session_state.selected_product = None
-        st.markdown("<b style='color:red;'>No Product Selected</b>", unsafe_allow_html=True)
+        st.session_state.current_price = 0.0
+        st.markdown("<b style='color:red;'>⚠️ No Product Selected</b>", unsafe_allow_html=True)
     
     # ============================================================
     # QUANTITIES
@@ -375,20 +366,32 @@ def main():
         boxes = st.number_input("📦 Boxes:", min_value=0, value=0, step=1, key="boxes_input")
     
     # ============================================================
-    # PRICES (Editable)
+    # PRICES (Editable) - AUTO FILL FROM PRODUCT
     # ============================================================
     
-    default_tp_box = 0.0
-    default_tp_carton = 0.0
-    if st.session_state.selected_product:
-        default_tp_box = float(st.session_state.selected_product['price'])
-        default_tp_carton = default_tp_box * 12
+    # Auto-fill price if product selected
+    default_tp_box = st.session_state.current_price
+    default_tp_carton = default_tp_box * 12
     
     col1, col2 = st.columns(2)
     with col1:
-        tp_carton = st.number_input("💰 TP/Carton:", min_value=0.0, value=default_tp_carton, step=1.0, format="%.2f", key="tpcarton_input")
+        tp_carton = st.number_input(
+            "💰 TP/Carton:", 
+            min_value=0.0, 
+            value=default_tp_carton, 
+            step=1.0, 
+            format="%.2f", 
+            key="tpcarton_input"
+        )
     with col2:
-        tp_box = st.number_input("💰 TP/Box:", min_value=0.0, value=default_tp_box, step=1.0, format="%.2f", key="tpbox_input")
+        tp_box = st.number_input(
+            "💰 TP/Box:", 
+            min_value=0.0, 
+            value=default_tp_box, 
+            step=1.0, 
+            format="%.2f", 
+            key="tpbox_input"
+        )
     
     # ============================================================
     # BILL TOTAL
@@ -525,7 +528,7 @@ def main():
     <div style="text-align: center; color: #666;">
         <p>Products: {len(PRODUCTS)} | Bills: {len(st.session_state.database['bills'])} | Next Bill: {st.session_state.database['next_bill_no']}</p>
         <p style="font-size: 12px; margin-top: 5px;">
-            ⌨️ Tab: Next Field | Enter: Add Bill | Esc: Refresh
+            ⌨️ Tab: Next Field | Shift+Tab: Previous Field | Enter: Add Bill | Esc: Refresh
         </p>
     </div>
     """, unsafe_allow_html=True)
