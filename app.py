@@ -1,6 +1,6 @@
 # ============================================================
 # AL-BARAKAH ENTERPRISES
-# BILLING SOFTWARE 2026 - WITH AUTO PRICE FILL
+# BILLING SOFTWARE 2026 - STREAMLIT APP
 # ============================================================
 
 import streamlit as st
@@ -19,7 +19,7 @@ COMPANY_NAME = "AL-BARAKAH ENTERPRISES"
 DATA_FILE = "billing_database.json"
 
 # ============================================================
-# PRODUCT LIST
+# PRODUCT LIST (UPDATED - 51 Products)
 # ============================================================
 
 PRODUCTS = [
@@ -53,7 +53,25 @@ PRODUCTS = [
     {"code":"28","name":"NUT KHAT CHOCOLATE","price":130},
     {"code":"29","name":"CHOCOLATE CONE","price":208},
     {"code":"30","name":"STRAWBERRY CONE","price":208},
-    {"code":"33","name":"MAX GUAVA 3-D JELLY","price":205}
+    {"code":"33","name":"MAX GUAVA 3-D JELLY","price":205},
+    {"code":"34","name":"JIM JAM","price":145},
+    {"code":"35","name":"CHOKOZO STRAWBERRY","price":135},
+    {"code":"36","name":"CHOKOZO CHOCOLATE","price":135},
+    {"code":"37","name":"CHOCOFY STRAWBERRY","price":135},
+    {"code":"38","name":"CHOCOFY CHOCOLATE","price":135},
+    {"code":"39","name":"MAKHAN BADAMI 10","price":215},
+    {"code":"40","name":"MAKHAN BADAMI TOFFEE","price":138},
+    {"code":"41","name":"DONUT CAKE","price":220},
+    {"code":"42","name":"CHOCO BITE CRUSHED PEANUT","price":210},
+    {"code":"43","name":"HEART BROWMIES","price":215},
+    {"code":"44","name":"MAKHAN WAALA","price":140},
+    {"code":"45","name":"COCONUT WAALA","price":145},
+    {"code":"46","name":"PANDA SPONGE CAKE","price":215},
+    {"code":"47","name":"MAGIC LOLLY POP","price":133},
+    {"code":"48","name":"ROLLEX WAFER STRAWBERRY","price":215},
+    {"code":"49","name":"ROLLEX WAFER CHOCOLATE","price":215},
+    {"code":"50","name":"YUMMY DONUT STRAWBERRY","price":218},
+    {"code":"51","name":"BOOMZ LIQUID MANGO","price":135}
 ]
 
 # ============================================================
@@ -74,11 +92,8 @@ def init_session():
     if 'selected_product' not in st.session_state:
         st.session_state.selected_product = None
     
-    # Store price for auto-fill
     if 'tp_box_value' not in st.session_state:
         st.session_state.tp_box_value = 0.0
-    if 'tp_carton_value' not in st.session_state:
-        st.session_state.tp_carton_value = 0.0
 
 def save_database():
     try:
@@ -90,7 +105,7 @@ def save_database():
         return False
 
 # ============================================================
-# EXCEL EXPORT FUNCTIONS
+# EXCEL EXPORT FUNCTIONS (Updated - No Cartons)
 # ============================================================
 
 def export_bill_excel(shop_name):
@@ -106,22 +121,21 @@ def export_bill_excel(shop_name):
     worksheet.set_portrait()
     worksheet.fit_to_pages(1, 1)
     
+    # Updated columns - No Cartons
     worksheet.set_column("A:A", 40)
     worksheet.set_column("B:B", 10)
     worksheet.set_column("C:C", 10)
-    worksheet.set_column("D:D", 10)
+    worksheet.set_column("D:D", 14)
     worksheet.set_column("E:E", 14)
-    worksheet.set_column("F:F", 14)
-    worksheet.set_column("G:G", 14)
-    worksheet.set_column("H:H", 12)
-    worksheet.set_column("I:I", 16)
+    worksheet.set_column("F:F", 12)
+    worksheet.set_column("G:G", 16)
     
     title = workbook.add_format({"bold": True, "font_size": 18, "align": "center", "border": 2})
     header = workbook.add_format({"bold": True, "bg_color": "#D9EAD3", "align": "center", "border": 2})
     cell = workbook.add_format({"border": 1, "align": "center"})
     total = workbook.add_format({"bold": True, "bg_color": "#FFF2CC", "align": "center", "border": 2})
     
-    worksheet.merge_range("A1:I1", COMPANY_NAME, title)
+    worksheet.merge_range("A1:G1", COMPANY_NAME, title)
     
     first_bill = shop_bills[0]
     worksheet.write("A3", "Shop Name", header)
@@ -134,35 +148,30 @@ def export_bill_excel(shop_name):
     worksheet.write("H4", first_bill["Date"], cell)
     
     row = 6
-    headers = ["Product", "Code", "Cartons", "Boxes", "TP/Carton", "TP/Box", "Gross", "Discount %", "Net"]
+    headers = ["Product", "Code", "Boxes", "TP/Box", "Gross", "Discount %", "Net"]
     for col, value in enumerate(headers):
         worksheet.write(row, col, value, header)
     row += 1
     
     gross_total = 0
-    box_total = 0
     for bill in shop_bills:
         worksheet.write(row, 0, bill["Product"], cell)
         worksheet.write(row, 1, bill["Code"], cell)
-        worksheet.write(row, 2, bill["Cartons"], cell)
-        worksheet.write(row, 3, bill["Boxes"], cell)
-        worksheet.write(row, 4, bill["TP/Carton"], cell)
-        worksheet.write(row, 5, bill["TP/Box"], cell)
-        worksheet.write(row, 6, bill["Gross"], cell)
-        worksheet.write(row, 7, bill["Discount %"], cell)
+        worksheet.write(row, 2, bill["Boxes"], cell)
+        worksheet.write(row, 3, bill["TP/Box"], cell)
+        worksheet.write(row, 4, bill["Gross"], cell)
+        worksheet.write(row, 5, bill["Discount %"], cell)
         
         excel_row = row + 1
-        worksheet.write_formula(row, 8, f"=G{excel_row}-(G{excel_row}*H{excel_row}/100)", cell)
+        worksheet.write_formula(row, 6, f"=E{excel_row}-(E{excel_row}*F{excel_row}/100)", cell)
         
         gross_total += bill["Gross"]
-        box_total += bill["Boxes"]
         row += 1
     
     worksheet.write(row, 2, "TOTAL", total)
-    worksheet.write(row, 3, box_total, total)
-    worksheet.write(row, 6, gross_total, total)
-    worksheet.write_blank(row, 7, None, total)
-    worksheet.write_formula(row, 8, f"=G{row+1}-(G{row+1}*H{row+1}/100)", total)
+    worksheet.write(row, 4, gross_total, total)
+    worksheet.write_blank(row, 5, None, total)
+    worksheet.write_formula(row, 6, f"=E{row+1}-(E{row+1}*F{row+1}/100)", total)
     
     workbook.close()
     output.seek(0)
@@ -177,9 +186,8 @@ def export_load_form_excel(booker):
     for bill in booker_bills:
         code = bill["Code"]
         if code not in summary:
-            summary[code] = {"Product": bill["Product"], "Boxes": 0, "Cartons": 0}
+            summary[code] = {"Product": bill["Product"], "Boxes": 0}
         summary[code]["Boxes"] += bill["Boxes"]
-        summary[code]["Cartons"] += bill["Cartons"]
     
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
@@ -192,36 +200,30 @@ def export_load_form_excel(booker):
     
     worksheet.set_column("A:A", 40)
     worksheet.set_column("B:B", 12)
-    worksheet.set_column("C:C", 12)
     
-    worksheet.merge_range("A1:C1", COMPANY_NAME, title)
+    worksheet.merge_range("A1:B1", COMPANY_NAME, title)
     worksheet.write("A3", "Order Booker", header)
     worksheet.write("B3", booker, cell)
     worksheet.write("A5", "Product", header)
     worksheet.write("B5", "Boxes", header)
-    worksheet.write("C5", "Cartons", header)
     
     row = 5
     total_boxes = 0
-    total_cartons = 0
     for item in summary.values():
         worksheet.write(row, 0, item["Product"], cell)
         worksheet.write(row, 1, item["Boxes"], cell)
-        worksheet.write(row, 2, item["Cartons"], cell)
         total_boxes += item["Boxes"]
-        total_cartons += item["Cartons"]
         row += 1
     
     worksheet.write(row, 0, "TOTAL", total)
     worksheet.write(row, 1, total_boxes, total)
-    worksheet.write(row, 2, total_cartons, total)
     
     workbook.close()
     output.seek(0)
     return output
 
 # ============================================================
-# CSS FOR KEYBOARD
+# CUSTOM CSS
 # ============================================================
 
 def add_keyboard_css():
@@ -246,7 +248,7 @@ def add_keyboard_css():
         margin: 2px;
     }
     .enter-hint {
-        background: #2d8a4e;
+        background: #28a745;
         color: white;
         padding: 2px 8px;
         border-radius: 4px;
@@ -271,7 +273,7 @@ def add_keyboard_css():
         if (e.key === 'Escape') {
             var buttons = document.querySelectorAll('button');
             for (var btn of buttons) {
-                if (btn.textContent.includes('Refresh Bill')) {
+                if (btn.textContent.includes('Refresh')) {
                     btn.click();
                     break;
                 }
@@ -336,69 +338,47 @@ def main():
     st.markdown("---")
     
     # ============================================================
-    # PRODUCT SELECTION - WITH AUTO PRICE FILL
+    # PRODUCT SELECTION
     # ============================================================
     
-    # Product Code
     code = st.text_input("🔢 Code:", placeholder="Product Code", key="code_input")
     
-    # Find product and set price
     if code:
         product = next((p for p in PRODUCTS if p["code"] == code), None)
         if product:
             st.session_state.selected_product = product
-            # Store prices in session state
             st.session_state.tp_box_value = float(product["price"])
-            st.session_state.tp_carton_value = float(product["price"] * 12)
             st.markdown(f"<h4 style='color:green;margin:0;'>✅ {product['name']}</h4>", unsafe_allow_html=True)
         else:
             st.session_state.selected_product = None
             st.session_state.tp_box_value = 0.0
-            st.session_state.tp_carton_value = 0.0
             st.markdown("<b style='color:red;'>❌ Product Not Found</b>", unsafe_allow_html=True)
     else:
         st.session_state.selected_product = None
         st.markdown("<b style='color:red;'>⚠️ No Product Selected</b>", unsafe_allow_html=True)
     
     # ============================================================
-    # QUANTITIES
+    # QUANTITY - ONLY BOXES
     # ============================================================
     
-    col1, col2 = st.columns(2)
-    with col1:
-        cartons = st.number_input("📦 Cartons:", min_value=0, value=0, step=1, key="cartons_input")
-    with col2:
-        boxes = st.number_input("📦 Boxes:", min_value=0, value=0, step=1, key="boxes_input")
+    boxes = st.number_input("📦 Boxes:", min_value=0, value=0, step=1, key="boxes_input")
     
     # ============================================================
-    # PRICES (Editable) - AUTO FILL FROM SESSION STATE
+    # PRICE - ONLY TP/Box
     # ============================================================
     
-    # Use session state values for auto-fill
-    col1, col2 = st.columns(2)
-    with col1:
-        tp_carton = st.number_input(
-            "💰 TP/Carton:", 
-            min_value=0.0, 
-            value=st.session_state.tp_carton_value, 
-            step=1.0, 
-            format="%.2f", 
-            key="tpcarton_input"
-        )
-    with col2:
-        tp_box = st.number_input(
-            "💰 TP/Box:", 
-            min_value=0.0, 
-            value=st.session_state.tp_box_value, 
-            step=1.0, 
-            format="%.2f", 
-            key="tpbox_input"
-        )
+    tp_box = st.number_input(
+        "💰 TP/Box:",
+        min_value=0.0,
+        value=st.session_state.tp_box_value,
+        step=1.0,
+        format="%.2f",
+        key="tpbox_input"
+    )
     
     # Update session state if user manually edits
     if tp_box != st.session_state.tp_box_value:
         st.session_state.tp_box_value = tp_box
-        st.session_state.tp_carton_value = tp_box * 12
     
     # ============================================================
     # BILL TOTAL
@@ -408,7 +388,7 @@ def main():
     with col1:
         discount = st.number_input("🎯 Discount %:", min_value=0.0, max_value=100.0, value=0.0, step=0.5, format="%.1f", key="discount_input")
     
-    gross_total = (boxes * tp_box) + (cartons * tp_carton)
+    gross_total = boxes * tp_box
     discount_amount = gross_total * (discount / 100)
     net_total = gross_total - discount_amount
     
@@ -423,15 +403,11 @@ def main():
     # BUTTONS
     # ============================================================
     
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
     
     with col1:
-        if st.button("🧮 Calculate", use_container_width=True, key="calc_btn"):
-            st.success("✅ Calculation Completed")
-    
-    with col2:
         if st.button("➕ Add Bill (Enter)", use_container_width=True, type="primary", key="add_btn"):
-            if st.session_state.selected_product and (cartons > 0 or boxes > 0):
+            if st.session_state.selected_product and boxes > 0:
                 bill = {
                     "Bill No": st.session_state.database["next_bill_no"],
                     "Date": datetime.now().strftime("%d-%m-%Y"),
@@ -441,9 +417,7 @@ def main():
                     "Delivery Man": delivery_man,
                     "Code": st.session_state.selected_product["code"],
                     "Product": st.session_state.selected_product["name"],
-                    "Cartons": cartons,
                     "Boxes": boxes,
-                    "TP/Carton": tp_carton,
                     "TP/Box": tp_box,
                     "Discount %": discount,
                     "Gross": gross_total,
@@ -456,19 +430,18 @@ def main():
                 
                 st.success(f"✅ Bill Added Successfully! Bill No: {bill['Bill No']}")
                 st.balloons()
-                # Reset product selection
+                
+                # Reset
                 st.session_state.selected_product = None
                 st.session_state.tp_box_value = 0.0
-                st.session_state.tp_carton_value = 0.0
                 st.rerun()
             else:
                 st.error("❌ Please select a product and enter quantity")
     
-    with col3:
+    with col2:
         if st.button("🔄 Refresh (Esc)", use_container_width=True, key="refresh_btn"):
             st.session_state.selected_product = None
             st.session_state.tp_box_value = 0.0
-            st.session_state.tp_carton_value = 0.0
             st.rerun()
     
     # ============================================================
