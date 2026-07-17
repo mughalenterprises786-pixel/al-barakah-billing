@@ -1,6 +1,6 @@
 # ============================================================
 # AL-BARAKAH ENTERPRISES
-# BILLING SOFTWARE 2026 - STREAMLIT APP (FULL SIZE EXCEL)
+# BILLING SOFTWARE 2026 - STREAMLIT APP
 # ============================================================
 
 import streamlit as st
@@ -108,7 +108,7 @@ def save_database():
         return False
 
 # ============================================================
-# EXCEL EXPORT - FULL SIZE
+# EXCEL EXPORT - YOUR FORMAT
 # ============================================================
 
 def export_bill_excel(shop_name):
@@ -129,45 +129,42 @@ def export_bill_excel(shop_name):
     worksheet.fit_to_pages(1, 1)
     
     # ============================================================
-    # FULL SIZE COLUMN WIDTHS
+    # COLUMN WIDTHS - Your Format
     # ============================================================
     
-    worksheet.set_column("A:A", 60)  # Product - Full width
-    worksheet.set_column("B:B", 12)  # Code
-    worksheet.set_column("C:C", 12)  # Boxes
-    worksheet.set_column("D:D", 16)  # TP/Box
-    worksheet.set_column("E:E", 16)  # Gross
-    worksheet.set_column("F:F", 14)  # Discount %
-    worksheet.set_column("G:G", 20)  # Net
+    worksheet.set_column("A:A", 18.75)  # Product - as you requested
+    worksheet.set_column("B:B", 10)     # Code
+    worksheet.set_column("C:C", 10)     # Boxes
+    worksheet.set_column("D:D", 14)     # TP/Box
+    worksheet.set_column("E:E", 14)     # Gross
+    worksheet.set_column("F:F", 12)     # Discount %
+    worksheet.set_column("G:G", 16)     # Net
     
     # ============================================================
-    # FORMATS - BIG FONTS
+    # FORMATS - Your Format
     # ============================================================
     
     title = workbook.add_format({
         "bold": True,
-        "font_size": 20,
+        "font_size": 18,
         "align": "center",
         "border": 2
     })
     
     header = workbook.add_format({
         "bold": True,
-        "font_size": 14,
         "bg_color": "#D9EAD3",
         "align": "center",
         "border": 2
     })
     
     cell = workbook.add_format({
-        "font_size": 14,
         "border": 1,
         "align": "center"
     })
     
     total = workbook.add_format({
         "bold": True,
-        "font_size": 14,
         "bg_color": "#FFF2CC",
         "align": "center",
         "border": 2
@@ -180,7 +177,7 @@ def export_bill_excel(shop_name):
     worksheet.merge_range("A1:G1", COMPANY_NAME, title)
     
     # ============================================================
-    # BILL INFO
+    # BILL INFO - Your Format
     # ============================================================
     
     first_bill = shop_bills[0]
@@ -188,7 +185,7 @@ def export_bill_excel(shop_name):
     worksheet.write("A3", "Shop Name", header)
     worksheet.write("B3", first_bill["Shop"], cell)
     
-    worksheet.write("D3", "Order Booker", header)
+    worksheet.write("D3", "Booker", header)
     worksheet.write("E3", first_bill["Order Booker"], cell)
     
     worksheet.write("G3", "Bill No", header)
@@ -198,7 +195,7 @@ def export_bill_excel(shop_name):
     worksheet.write("H4", first_bill["Date"], cell)
     
     # ============================================================
-    # TABLE HEADER
+    # TABLE HEADER - Your Format
     # ============================================================
     
     row = 6
@@ -211,7 +208,7 @@ def export_bill_excel(shop_name):
     row += 1
     
     # ============================================================
-    # WRITE BILL DATA
+    # WRITE BILL DATA - Your Format
     # ============================================================
     
     gross_total = 0
@@ -236,7 +233,7 @@ def export_bill_excel(shop_name):
         row += 1
     
     # ============================================================
-    # TOTAL ROW
+    # TOTAL ROW - Your Format
     # ============================================================
     
     worksheet.write(row, 2, "TOTAL", total)
@@ -257,7 +254,7 @@ def export_bill_excel(shop_name):
     return output
 
 # ============================================================
-# EXPORT LOAD FORM - FULL SIZE
+# EXPORT LOAD FORM
 # ============================================================
 
 def export_load_form_excel(booker):
@@ -285,35 +282,32 @@ def export_load_form_excel(booker):
     
     title = workbook.add_format({
         "bold": True,
-        "font_size": 18,
+        "font_size": 16,
         "align": "center",
         "border": 2
     })
     
     header = workbook.add_format({
         "bold": True,
-        "font_size": 14,
         "bg_color": "#D9EAD3",
         "align": "center",
         "border": 2
     })
     
     cell = workbook.add_format({
-        "font_size": 14,
         "border": 1,
         "align": "center"
     })
     
     total = workbook.add_format({
         "bold": True,
-        "font_size": 14,
         "bg_color": "#FFF2CC",
         "align": "center",
         "border": 2
     })
     
-    worksheet.set_column("A:A", 60)  # Product - Full width
-    worksheet.set_column("B:B", 15)  # Boxes
+    worksheet.set_column("A:A", 18.75)  # Product
+    worksheet.set_column("B:B", 12)     # Boxes
     
     worksheet.merge_range("A1:B1", COMPANY_NAME, title)
     
