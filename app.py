@@ -1,6 +1,6 @@
 # ============================================================
 # AL-BARAKAH ENTERPRISES
-# BILLING SOFTWARE 2026 - TABLE DESIGN
+# BILLING SOFTWARE 2026 - STREAMLIT APP
 # ============================================================
 
 import streamlit as st
@@ -19,60 +19,60 @@ COMPANY_NAME = "AL-BARAKAH ENTERPRISES"
 DATA_FILE = "billing_database.json"
 
 # ============================================================
-# PRODUCT LIST (51 Products) - ALPHABETICAL ORDER
+# PRODUCT LIST (51 Products)
 # ============================================================
 
-PRODUCTS = sorted([
-    {"code":"51","name":"BOOMZ LIQUID MANGO","price":135},
-    {"code":"4","name":"BADAM DELIGHT CANDY BOX","price":125},
-    {"code":"25","name":"BADAM CONE BOX","price":208},
-    {"code":"42","name":"CHOCO BITE CRUSHED PEANUT","price":210},
-    {"code":"36","name":"CHOKOZO CHOCOLATE","price":135},
-    {"code":"35","name":"CHOKOZO STRAWBERRY","price":135},
-    {"code":"38","name":"CHOCOFY CHOCOLATE","price":135},
-    {"code":"37","name":"CHOCOFY STRAWBERRY","price":135},
-    {"code":"29","name":"CHOCOLATE CONE","price":208},
-    {"code":"11","name":"CHOCOLATE CONE WITH PEANUT CHUNKS","price":263},
-    {"code":"45","name":"COCONUT WAALA","price":145},
-    {"code":"7","name":"CRISPEE WAFER ORANGE","price":130},
-    {"code":"6","name":"CRISPEE WAFER BANANA","price":130},
-    {"code":"8","name":"CRISPEE WAFER STRAWBERRY","price":130},
-    {"code":"17","name":"CUP CAKE CHOCOLATE","price":215},
-    {"code":"41","name":"DONUT CAKE","price":220},
-    {"code":"24","name":"FISHU BIG CHOCO STICK","price":180},
-    {"code":"43","name":"HEART BROWMIES","price":215},
-    {"code":"34","name":"JIM JAM","price":145},
-    {"code":"5","name":"KHATU APPLE CANDY","price":400},
-    {"code":"13","name":"KIDS JOY EGG CHOCOLATE WITH BISCUIT","price":445},
-    {"code":"12","name":"KOKO MASTI CHOCOLATE TUBE","price":210},
-    {"code":"16","name":"KOKO MASTI MILK CREAM TUBE","price":210},
-    {"code":"14","name":"KOKO MASTI STRAWBERRY TUBE","price":210},
-    {"code":"27","name":"KULFI PISTA MILKY LOLLIPOP BOX","price":130},
-    {"code":"10","name":"LUSH STAR CHOC. HAZELNUT","price":270},
-    {"code":"47","name":"MAGIC LOLLY POP","price":133},
-    {"code":"44","name":"MAKHAN WAALA","price":140},
-    {"code":"39","name":"MAKHAN BADAMI 10","price":215},
-    {"code":"40","name":"MAKHAN BADAMI TOFFEE","price":138},
-    {"code":"33","name":"MAX GUAVA 3-D JELLY","price":205},
-    {"code":"19","name":"MAX STRAWBERRY 3-D JELLY","price":205},
-    {"code":"18","name":"MELLOW JOY MANGO MARSHMALLOW","price":206},
-    {"code":"26","name":"MICKEY POP FRUITY BOX","price":137},
-    {"code":"9","name":"MINI CONE STRAWBERRY","price":225},
-    {"code":"3","name":"MINT GUM CENTER FILLED COATED BUBBLE","price":208},
-    {"code":"28","name":"NUT KHAT CHOCOLATE","price":130},
-    {"code":"23","name":"O-MILK NATURAL OAT ENERGY","price":215},
+PRODUCTS = [
     {"code":"1","name":"OKAY CHOCOLATE VANILLA LAYER CAKE","price":215},
     {"code":"2","name":"OKAY STRAWBERRY VANILLA LAYER CAKE","price":215},
-    {"code":"46","name":"PANDA SPONGE CAKE","price":215},
-    {"code":"49","name":"ROLLEX WAFER CHOCOLATE","price":215},
-    {"code":"48","name":"ROLLEX WAFER STRAWBERRY","price":215},
-    {"code":"30","name":"STRAWBERRY CONE","price":208},
+    {"code":"3","name":"MINT GUM CENTER FILLED COATED BUBBLE","price":208},
+    {"code":"4","name":"BADAM DELIGHT CANDY BOX","price":125},
+    {"code":"5","name":"KHATU APPLE CANDY","price":400},
+    {"code":"6","name":"CRISPEE WAFER BANANA","price":130},
+    {"code":"7","name":"CRISPEE WAFER ORANGE","price":130},
+    {"code":"8","name":"CRISPEE WAFER STRAWBERRY","price":130},
+    {"code":"9","name":"MINI CONE STRAWBERRY","price":225},
+    {"code":"10","name":"LUSH STAR CHOC. HAZELNUT","price":270},
+    {"code":"11","name":"CHOCOLATE CONE WITH PEANUT CHUNKS","price":263},
+    {"code":"12","name":"KOKO MASTI CHOCOLATE TUBE","price":210},
+    {"code":"13","name":"KIDS JOY EGG CHOCOLATE WITH BISCUIT","price":445},
+    {"code":"14","name":"KOKO MASTI STRAWBERRY TUBE","price":210},
     {"code":"15","name":"STRAWBERRY FLAVORED CONE BOX","price":208},
+    {"code":"16","name":"KOKO MASTI MILK CREAM TUBE","price":210},
+    {"code":"17","name":"CUP CAKE CHOCOLATE","price":215},
+    {"code":"18","name":"MELLOW JOY MANGO MARSHMALLOW","price":206},
+    {"code":"19","name":"MAX STRAWBERRY 3-D JELLY","price":205},
     {"code":"20","name":"SUPREME SOFT CAKE","price":215},
     {"code":"21","name":"SWISS ROLL CAKE STRAWBERRY","price":215},
     {"code":"22","name":"SWISS ROLL CAKE CHOCOLATE","price":215},
-    {"code":"50","name":"YUMMY DONUT STRAWBERRY","price":218}
-], key=lambda x: x["name"])
+    {"code":"23","name":"O-MILK NATURAL OAT ENERGY","price":215},
+    {"code":"24","name":"FISHU BIG CHOCO STICK","price":180},
+    {"code":"25","name":"BADAM CONE BOX","price":208},
+    {"code":"26","name":"MICKEY POP FRUITY BOX","price":137},
+    {"code":"27","name":"KULFI PISTA MILKY LOLLIPOP BOX","price":130},
+    {"code":"28","name":"NUT KHAT CHOCOLATE","price":130},
+    {"code":"29","name":"CHOCOLATE CONE","price":208},
+    {"code":"30","name":"STRAWBERRY CONE","price":208},
+    {"code":"33","name":"MAX GUAVA 3-D JELLY","price":205},
+    {"code":"34","name":"JIM JAM","price":145},
+    {"code":"35","name":"CHOKOZO STRAWBERRY","price":135},
+    {"code":"36","name":"CHOKOZO CHOCOLATE","price":135},
+    {"code":"37","name":"CHOCOFY STRAWBERRY","price":135},
+    {"code":"38","name":"CHOCOFY CHOCOLATE","price":135},
+    {"code":"39","name":"MAKHAN BADAMI 10","price":215},
+    {"code":"40","name":"MAKHAN BADAMI TOFFEE","price":138},
+    {"code":"41","name":"DONUT CAKE","price":220},
+    {"code":"42","name":"CHOCO BITE CRUSHED PEANUT","price":210},
+    {"code":"43","name":"HEART BROWMIES","price":215},
+    {"code":"44","name":"MAKHAN WAALA","price":140},
+    {"code":"45","name":"COCONUT WAALA","price":145},
+    {"code":"46","name":"PANDA SPONGE CAKE","price":215},
+    {"code":"47","name":"MAGIC LOLLY POP","price":133},
+    {"code":"48","name":"ROLLEX WAFER STRAWBERRY","price":215},
+    {"code":"49","name":"ROLLEX WAFER CHOCOLATE","price":215},
+    {"code":"50","name":"YUMMY DONUT STRAWBERRY","price":218},
+    {"code":"51","name":"BOOMZ LIQUID MANGO","price":135}
+]
 
 # ============================================================
 # DATABASE FUNCTIONS
@@ -89,11 +89,14 @@ def init_session():
         else:
             st.session_state.database = {"next_bill_no": 1, "bills": []}
     
-    if 'selected_products' not in st.session_state:
-        st.session_state.selected_products = {}
+    if 'selected_product' not in st.session_state:
+        st.session_state.selected_product = None
     
-    if 'grand_total' not in st.session_state:
-        st.session_state.grand_total = 0
+    if 'tp_box_value' not in st.session_state:
+        st.session_state.tp_box_value = 0.0
+    
+    if 'boxes_value' not in st.session_state:
+        st.session_state.boxes_value = 0
 
 def save_database():
     try:
@@ -105,21 +108,24 @@ def save_database():
         return False
 
 # ============================================================
-# EXCEL EXPORT - SAME FORMAT
+# EXCEL EXPORT - YOUR FORMAT
 # ============================================================
 
-def export_bill_excel(shop_name, bills_data):
-    if not bills_data:
+def export_bill_excel(shop_name):
+    shop_bills = [b for b in st.session_state.database["bills"] if b["Shop"].strip() == shop_name.strip()]
+    if not shop_bills:
         return None
     
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet("Bill")
     
+    # Page Setup
     worksheet.set_paper(9)
     worksheet.set_portrait()
     worksheet.fit_to_pages(1, 1)
     
+    # Column Widths - As Requested
     worksheet.set_column("A:A", 47.86)
     worksheet.set_column("B:B", 23.71)
     worksheet.set_column("C:C", 12.71)
@@ -129,6 +135,7 @@ def export_bill_excel(shop_name, bills_data):
     worksheet.set_column("G:G", 13.14)
     worksheet.set_column("H:H", 14.14)
     
+    # Formats
     title = workbook.add_format({
         "bold": True,
         "font_size": 18,
@@ -144,12 +151,14 @@ def export_bill_excel(shop_name, bills_data):
         "border": 2
     })
     
+    # Product Names: Left Aligned, Font 14
     cell_left = workbook.add_format({
         "font_size": 14,
         "border": 1,
         "align": "left"
     })
     
+    # All Numbers: Center Aligned, Font 14
     cell_center = workbook.add_format({
         "font_size": 14,
         "border": 1,
@@ -164,9 +173,12 @@ def export_bill_excel(shop_name, bills_data):
         "border": 2
     })
     
+    # Company Header
     worksheet.merge_range("A1:H1", COMPANY_NAME, title)
     
-    first_bill = bills_data[0]
+    # Bill Info
+    first_bill = shop_bills[0]
+    
     worksheet.write("A3", "Shop Name", header)
     worksheet.write("B3", first_bill["Shop"], cell_center)
     worksheet.write("D3", "Booker", header)
@@ -176,6 +188,7 @@ def export_bill_excel(shop_name, bills_data):
     worksheet.write("G4", "Date", header)
     worksheet.write("H4", first_bill["Date"], cell_center)
     
+    # Table Header
     row = 6
     headers = ["Product", "Code", "Boxes", "TP/Box", "Gross", "Discount %", "Net"]
     
@@ -184,10 +197,11 @@ def export_bill_excel(shop_name, bills_data):
     
     row += 1
     
+    # Write Bill Data
     gross_total = 0
     
-    for bill in bills_data:
-        worksheet.write(row, 0, bill["Product"], cell_left)
+    for bill in shop_bills:
+        worksheet.write(row, 0, bill["Product"], cell_left)      # Left aligned
         worksheet.write(row, 1, bill["Code"], cell_center)
         worksheet.write(row, 2, bill["Boxes"], cell_center)
         worksheet.write(row, 3, bill["TP/Box"], cell_center)
@@ -204,6 +218,7 @@ def export_bill_excel(shop_name, bills_data):
         gross_total += bill["Gross"]
         row += 1
     
+    # Total Row
     worksheet.write(row, 2, "TOTAL", total)
     worksheet.write(row, 4, gross_total, total)
     worksheet.write_blank(row, 5, None, total)
@@ -217,12 +232,13 @@ def export_bill_excel(shop_name, bills_data):
     output.seek(0)
     return output
 
-def export_load_form_excel(booker, bills_data):
-    if not bills_data:
+def export_load_form_excel(booker):
+    booker_bills = [b for b in st.session_state.database["bills"] if b["Order Booker"].strip() == booker.strip()]
+    if not booker_bills:
         return None
     
     summary = {}
-    for bill in bills_data:
+    for bill in booker_bills:
         code = bill["Code"]
         if code not in summary:
             summary[code] = {
@@ -298,7 +314,7 @@ def export_load_form_excel(booker, bills_data):
     return output
 
 # ============================================================
-# CSS - WITH ENTER KEY SUPPORT FOR CHECKBOX
+# CSS
 # ============================================================
 
 def add_css():
@@ -321,34 +337,27 @@ def add_css():
         height: 48px !important;
     }
     
-    /* Checkbox styling */
-    .stCheckbox label {
+    .product-name {
         font-size: 18px !important;
-    }
-    
-    .stCheckbox input[type="checkbox"] {
-        width: 20px !important;
-        height: 20px !important;
-        cursor: pointer !important;
-    }
-    
-    /* When checkbox is checked - green */
-    .stCheckbox input[type="checkbox"]:checked {
-        accent-color: #28a745 !important;
-    }
-    
-    .product-table {
-        font-size: 14px !important;
-    }
-    
-    .grand-total {
-        font-size: 20px !important;
         font-weight: bold !important;
         color: #155724 !important;
+        margin: 8px 0 !important;
+        padding: 12px 15px !important;
         background-color: #d4edda !important;
-        padding: 10px !important;
         border-radius: 8px !important;
-        text-align: center !important;
+        border-left: 6px solid #28a745 !important;
+        text-align: left !important;
+    }
+    
+    .shop-name {
+        font-size: 18px !important;
+        font-weight: bold !important;
+        color: #004085 !important;
+        margin: 5px 0 !important;
+        padding: 10px 15px !important;
+        background-color: #cce5ff !important;
+        border-radius: 8px !important;
+        border-left: 6px solid #007bff !important;
     }
     
     .stMetric label {
@@ -359,38 +368,7 @@ def add_css():
         font-size: 24px !important;
         font-weight: bold !important;
     }
-    
-    /* Enter key hint for checkbox */
-    .enter-hint {
-        font-size: 13px !important;
-        color: #666;
-        background: #f0f0f0;
-        padding: 4px 10px;
-        border-radius: 4px;
-        display: inline-block;
-        margin: 2px;
-    }
     </style>
-    
-    <!-- JavaScript for Enter key on checkbox -->
-    <script>
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            var active = document.activeElement;
-            if (active && active.type === 'checkbox') {
-                e.preventDefault();
-                active.checked = !active.checked;
-                active.dispatchEvent(new Event('change'));
-            }
-        }
-    });
-    </script>
-    
-    <div style="background: #f8f9fa; padding: 8px 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; border: 1px solid #ddd;">
-        <span class="enter-hint">↵ Enter = Tick/Untick Checkbox</span>
-        <span class="enter-hint">↹ Tab = Next Field</span>
-        <span class="enter-hint">Space = Tick/Untick</span>
-    </div>
     """, unsafe_allow_html=True)
 
 # ============================================================
@@ -419,233 +397,174 @@ def main():
     
     st.markdown("---")
     
-    # ============================================================
-    # BILL INFORMATION
-    # ============================================================
-    
-    col1, col2, col3, col4 = st.columns(4)
+    # Bill Information
+    col1, col2 = st.columns(2)
     with col1:
         st.text_input("📌 Bill No:", value=st.session_state.database["next_bill_no"], disabled=True)
     with col2:
         st.text_input("📅 Date:", value=datetime.now().strftime("%d-%m-%Y"), disabled=True)
-    with col3:
-        shop_name = st.text_input("🏪 Shop:", placeholder="Enter Shop Name", key="shop_input")
-    with col4:
-        order_booker = st.text_input("📝 Booker:", placeholder="Enter Order Booker", key="booker_input")
     
-    # ============================================================
-    # PRODUCT TABLE
-    # ============================================================
+    # Customer Information
+    shop_name = st.text_input("🏪 Shop:", placeholder="Enter Shop Name", key="shop_input")
     
-    st.markdown("### 📋 Select Products (Alphabetical Order)")
+    if shop_name.strip():
+        st.markdown(f"""
+        <div class="shop-name">
+            🏪 {shop_name}
+        </div>
+        """, unsafe_allow_html=True)
     
-    col1, col2, col3, col4, col5 = st.columns([0.5, 3, 1.5, 1.5, 2])
-    
-    with col1:
-        st.markdown("**✅**")
-    with col2:
-        st.markdown("**Product Name**")
-    with col3:
-        st.markdown("**Price/Box**")
-    with col4:
-        st.markdown("**Boxes**")
-    with col5:
-        st.markdown("**Total**")
+    order_booker = st.text_input("📝 Booker:", placeholder="Enter Order Booker", key="booker_input")
+    salesman = st.text_input("👤 Salesman:", placeholder="Enter Salesman", key="salesman_input")
+    delivery_man = st.text_input("🚚 Delivery:", placeholder="Enter Delivery Man", key="delivery_input")
     
     st.markdown("---")
     
-    grand_total = 0
+    # Product Selection
+    code = st.text_input("🔢 Code:", placeholder="Product Code", key="code_input")
     
-    for idx, product in enumerate(PRODUCTS):
-        key_prefix = f"p_{product['code']}"
-        
-        col1, col2, col3, col4, col5 = st.columns([0.5, 3, 1.5, 1.5, 2])
-        
-        with col1:
-            selected = st.checkbox(
-                "", 
-                key=f"select_{key_prefix}",
-                value=st.session_state.selected_products.get(f"select_{key_prefix}", False)
-            )
-            st.session_state.selected_products[f"select_{key_prefix}"] = selected
-        
-        with col2:
-            st.markdown(f"{product['name']}")
-        
-        with col3:
-            st.markdown(f"₹{product['price']:.2f}")
-        
-        with col4:
-            if selected:
-                boxes = st.number_input(
-                    "", 
-                    min_value=0, 
-                    value=st.session_state.selected_products.get(f"boxes_{key_prefix}", 0),
-                    step=1,
-                    key=f"boxes_{key_prefix}"
-                )
-                st.session_state.selected_products[f"boxes_{key_prefix}"] = boxes
-            else:
-                st.markdown("—")
-                st.session_state.selected_products[f"boxes_{key_prefix}"] = 0
-        
-        with col5:
-            if selected:
-                total = product['price'] * st.session_state.selected_products.get(f"boxes_{key_prefix}", 0)
-                st.markdown(f"**₹{total:,.2f}**")
-                grand_total += total
-            else:
-                st.markdown("₹0.00")
+    if code:
+        product = next((p for p in PRODUCTS if p["code"] == code), None)
+        if product:
+            st.session_state.selected_product = product
+            st.session_state.tp_box_value = float(product["price"])
+            st.markdown(f"""
+            <div class="product-name">
+                ✅ {product['name']}
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.session_state.selected_product = None
+            st.session_state.tp_box_value = 0.0
+            st.markdown("<div style='font-size:18px;color:red;font-weight:bold;padding:12px;'>❌ Product Not Found</div>", unsafe_allow_html=True)
+    else:
+        st.session_state.selected_product = None
+        st.markdown("<div style='font-size:18px;color:red;font-weight:bold;padding:12px;'>⚠️ No Product Selected</div>", unsafe_allow_html=True)
     
-    st.markdown("---")
+    # Quantity
+    boxes = st.number_input("📦 Boxes:", min_value=0, value=st.session_state.boxes_value, step=1, key="boxes_input")
+    st.session_state.boxes_value = boxes
     
-    st.markdown(f"""
-    <div class="grand-total">
-        🧾 Grand Total: ₹{grand_total:,.2f}
-    </div>
-    """, unsafe_allow_html=True)
+    # Price
+    tp_box = st.number_input(
+        "💰 TP/Box:",
+        min_value=0.0,
+        value=st.session_state.tp_box_value,
+        step=1.0,
+        format="%.2f",
+        key="tpbox_input"
+    )
     
-    st.session_state.grand_total = grand_total
+    if tp_box != st.session_state.tp_box_value:
+        st.session_state.tp_box_value = tp_box
     
-    # ============================================================
-    # DISCOUNT & NET
-    # ============================================================
+    # Discount
+    discount = st.number_input("🎯 Discount %:", min_value=0.0, max_value=100.0, value=0.0, step=0.5, format="%.1f", key="discount_input")
+    
+    # Bill Total
+    gross_total = boxes * tp_box
+    discount_amount = gross_total * (discount / 100)
+    net_total = gross_total - discount_amount
     
     col1, col2, col3 = st.columns(3)
     with col1:
-        discount = st.number_input("🎯 Discount %:", min_value=0.0, max_value=100.0, value=0.0, step=0.5, format="%.1f", key="discount_input")
-    
-    discount_amount = grand_total * (discount / 100)
-    net_total = grand_total - discount_amount
-    
+        st.metric("💰 Gross Amount", f"₹{gross_total:,.2f}")
     with col2:
-        st.metric("💰 Gross Amount", f"₹{grand_total:,.2f}")
+        st.metric("📉 Discount", f"₹{discount_amount:,.2f}", delta=f"-{discount}%", delta_color="inverse")
     with col3:
-        st.metric("✅ Net Amount", f"₹{net_total:,.2f}", delta=f"-{discount_amount:,.2f}" if discount > 0 else None)
+        st.metric("✅ Net Amount", f"₹{net_total:,.2f}")
     
     st.markdown("---")
     
-    # ============================================================
-    # BUTTONS
-    # ============================================================
-    
+    # Buttons
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("➕ Add Bill", use_container_width=True, type="primary"):
-            selected_items = []
-            for idx, product in enumerate(PRODUCTS):
-                key_prefix = f"p_{product['code']}"
-                if st.session_state.selected_products.get(f"select_{key_prefix}", False):
-                    boxes = st.session_state.selected_products.get(f"boxes_{key_prefix}", 0)
-                    if boxes > 0:
-                        selected_items.append({
-                            "code": product["code"],
-                            "name": product["name"],
-                            "price": product["price"],
-                            "boxes": boxes,
-                            "total": product["price"] * boxes
-                        })
-            
-            if not selected_items:
-                st.error("❌ Please select at least one product with quantity > 0")
-            elif shop_name.strip() == "":
-                st.error("❌ Please enter Shop Name")
-            elif order_booker.strip() == "":
-                st.error("❌ Please enter Booker name")
-            else:
-                for item in selected_items:
-                    bill = {
-                        "Bill No": st.session_state.database["next_bill_no"],
-                        "Date": datetime.now().strftime("%d-%m-%Y"),
-                        "Shop": shop_name,
-                        "Order Booker": order_booker,
-                        "Salesman": "",
-                        "Delivery Man": "",
-                        "Code": item["code"],
-                        "Product": item["name"],
-                        "Boxes": item["boxes"],
-                        "TP/Box": item["price"],
-                        "Discount %": discount,
-                        "Gross": item["total"],
-                        "Net": item["total"] - (item["total"] * discount / 100)
-                    }
-                    st.session_state.database["bills"].append(bill)
+        if st.button("➕ Add Bill", use_container_width=True, type="primary", key="add_btn"):
+            if st.session_state.selected_product and boxes > 0:
+                bill = {
+                    "Bill No": st.session_state.database["next_bill_no"],
+                    "Date": datetime.now().strftime("%d-%m-%Y"),
+                    "Shop": shop_name,
+                    "Order Booker": order_booker,
+                    "Salesman": salesman,
+                    "Delivery Man": delivery_man,
+                    "Code": st.session_state.selected_product["code"],
+                    "Product": st.session_state.selected_product["name"],
+                    "Boxes": boxes,
+                    "TP/Box": tp_box,
+                    "Discount %": discount,
+                    "Gross": gross_total,
+                    "Net": net_total
+                }
                 
+                st.session_state.database["bills"].append(bill)
                 st.session_state.database["next_bill_no"] += 1
                 save_database()
                 
-                st.success(f"✅ Bill Added Successfully! Bill No: {st.session_state.database['next_bill_no'] - 1}")
+                st.success(f"✅ Bill Added Successfully! Bill No: {bill['Bill No']}")
                 st.balloons()
                 
-                for idx, product in enumerate(PRODUCTS):
-                    key_prefix = f"p_{product['code']}"
-                    st.session_state.selected_products[f"select_{key_prefix}"] = False
-                    st.session_state.selected_products[f"boxes_{key_prefix}"] = 0
-                
+                st.session_state.selected_product = None
+                st.session_state.tp_box_value = 0.0
+                st.session_state.boxes_value = 0
                 st.rerun()
+            else:
+                st.error("❌ Please select a product and enter quantity")
     
     with col2:
-        if st.button("🔄 Refresh", use_container_width=True):
-            for idx, product in enumerate(PRODUCTS):
-                key_prefix = f"p_{product['code']}"
-                st.session_state.selected_products[f"select_{key_prefix}"] = False
-                st.session_state.selected_products[f"boxes_{key_prefix}"] = 0
+        if st.button("🔄 Refresh", use_container_width=True, key="refresh_btn"):
+            st.session_state.selected_product = None
+            st.session_state.tp_box_value = 0.0
+            st.session_state.boxes_value = 0
             st.rerun()
     
     with col3:
-        if st.button("📋 Show Bills", use_container_width=True):
+        if st.button("📋 Show Bills", use_container_width=True, key="show_bills_btn"):
             if st.session_state.database["bills"]:
                 df = pd.DataFrame(st.session_state.database["bills"])
                 st.dataframe(df, use_container_width=True)
             else:
                 st.info("No bills found")
     
-    # ============================================================
-    # EXPORT BUTTONS
-    # ============================================================
-    
+    # Export Buttons
     st.markdown("---")
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("📄 Export Bill (Excel)", use_container_width=True):
+        if st.button("📄 Export Bill (Excel)", use_container_width=True, key="export_bill_btn"):
             if shop_name.strip() == "":
                 st.error("❌ Please enter Shop Name first")
             else:
-                shop_bills = [b for b in st.session_state.database["bills"] if b["Shop"].strip() == shop_name.strip()]
-                if shop_bills:
-                    excel_file = export_bill_excel(shop_name, shop_bills)
-                    if excel_file:
-                        st.download_button(
-                            label="📥 Download Excel",
-                            data=excel_file,
-                            file_name=f"{shop_name}.xlsx",
-                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                        )
+                excel_file = export_bill_excel(shop_name)
+                if excel_file:
+                    st.download_button(
+                        label="📥 Download Excel",
+                        data=excel_file,
+                        file_name=f"{shop_name}.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
                 else:
                     st.error(f"❌ No bills found for: {shop_name}")
     
     with col2:
-        if st.button("📦 Export Load Form (Excel)", use_container_width=True):
+        if st.button("📦 Export Load Form (Excel)", use_container_width=True, key="export_load_btn"):
             if order_booker.strip() == "":
                 st.error("❌ Please enter Order Booker name")
             else:
-                booker_bills = [b for b in st.session_state.database["bills"] if b["Order Booker"].strip() == order_booker.strip()]
-                if booker_bills:
-                    excel_file = export_load_form_excel(order_booker, booker_bills)
-                    if excel_file:
-                        st.download_button(
-                            label="📥 Download Excel",
-                            data=excel_file,
-                            file_name=f"{order_booker}_Load_Form.xlsx",
-                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                        )
+                excel_file = export_load_form_excel(order_booker)
+                if excel_file:
+                    st.download_button(
+                        label="📥 Download Excel",
+                        data=excel_file,
+                        file_name=f"{order_booker}_Load_Form.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
                 else:
                     st.error(f"❌ No bills found for: {order_booker}")
     
     with col3:
-        if st.button("🗑 Refresh Load Form", use_container_width=True):
+        if st.button("🗑 Refresh Load Form", use_container_width=True, key="refresh_load_btn"):
             if order_booker.strip() == "":
                 st.error("❌ Please enter Order Booker name")
             else:
@@ -655,17 +574,11 @@ def main():
                 st.success(f"✅ Load form cleared for: {order_booker}")
                 st.rerun()
     
-    # ============================================================
-    # FOOTER
-    # ============================================================
-    
+    # Footer
     st.markdown("---")
     st.markdown(f"""
     <div style="text-align: center; color: #666; font-size: 15px;">
         <p>📦 Products: {len(PRODUCTS)} | 🧾 Bills: {len(st.session_state.database['bills'])} | 📌 Next Bill: {st.session_state.database['next_bill_no']}</p>
-        <p style="font-size: 13px; margin-top: 5px;">
-            ⌨️ Enter = Tick/Untick Checkbox | Tab = Next Field | Space = Tick/Untick
-        </p>
     </div>
     """, unsafe_allow_html=True)
 
