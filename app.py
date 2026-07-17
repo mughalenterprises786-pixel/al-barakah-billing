@@ -1,7 +1,6 @@
 # ============================================================
 # EXCEL EXPORT - WITH FONT SIZE 14 & LEFT ALIGNMENT
 # ============================================================
-
 def export_bill_excel(shop_name):
     shop_bills = [b for b in st.session_state.database["bills"] if b["Shop"].strip() == shop_name.strip()]
     if not shop_bills:
