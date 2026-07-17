@@ -1,6 +1,6 @@
 # ============================================================
 # AL-BARAKAH ENTERPRISES
-# BILLING SOFTWARE 2026 - STREAMLIT APP
+# BILLING SOFTWARE 2026 - STREAMLIT APP (FIXED)
 # ============================================================
 
 import streamlit as st
@@ -94,6 +94,9 @@ def init_session():
     
     if 'tp_box_value' not in st.session_state:
         st.session_state.tp_box_value = 0.0
+    
+    if 'boxes_value' not in st.session_state:
+        st.session_state.boxes_value = 0
 
 def save_database():
     try:
@@ -105,7 +108,7 @@ def save_database():
         return False
 
 # ============================================================
-# EXCEL EXPORT FUNCTIONS (Updated - No Cartons)
+# EXCEL EXPORT - FIXED COLUMNS
 # ============================================================
 
 def export_bill_excel(shop_name):
@@ -121,7 +124,7 @@ def export_bill_excel(shop_name):
     worksheet.set_portrait()
     worksheet.fit_to_pages(1, 1)
     
-    # Updated columns - No Cartons
+    # Columns: Product, Code, Boxes, TP/Box, Gross, Discount %, Net
     worksheet.set_column("A:A", 40)
     worksheet.set_column("B:B", 10)
     worksheet.set_column("C:C", 10)
@@ -223,7 +226,7 @@ def export_load_form_excel(booker):
     return output
 
 # ============================================================
-# CUSTOM CSS
+# CSS
 # ============================================================
 
 def add_keyboard_css():
@@ -289,6 +292,16 @@ def add_keyboard_css():
         <span class="keyboard-hint">⎋ Esc = Refresh</span>
     </div>
     """, unsafe_allow_html=True)
+
+# ============================================================
+# CALCULATE GROSS & NET
+# ============================================================
+
+def calculate_totals(boxes, tp_box, discount):
+    gross_total = boxes * tp_box
+    discount_amount = gross_total * (discount / 100)
+    net_total = gross_total - discount_amount
+    return gross_total, discount_amount, net_total
 
 # ============================================================
 # MAIN APP
@@ -361,7 +374,8 @@ def main():
     # QUANTITY - ONLY BOXES
     # ============================================================
     
-    boxes = st.number_input("📦 Boxes:", min_value=0, value=0, step=1, key="boxes_input")
+    boxes = st.number_input("📦 Boxes:", min_value=0, value=st.session_state.boxes_value, step=1, key="boxes_input")
+    st.session_state.boxes_value = boxes
     
     # ============================================================
     # PRICE - ONLY TP/Box
@@ -381,21 +395,25 @@ def main():
         st.session_state.tp_box_value = tp_box
     
     # ============================================================
-    # BILL TOTAL
+    # DISCOUNT
     # ============================================================
+    
+    discount = st.number_input("🎯 Discount %:", min_value=0.0, max_value=100.0, value=0.0, step=0.5, format="%.1f", key="discount_input")
+    
+    # ============================================================
+    # BILL TOTAL - Calculate and Display
+    # ============================================================
+    
+    # Calculate totals
+    gross_total, discount_amount, net_total = calculate_totals(boxes, tp_box, discount)
     
     col1, col2, col3 = st.columns(3)
     with col1:
-        discount = st.number_input("🎯 Discount %:", min_value=0.0, max_value=100.0, value=0.0, step=0.5, format="%.1f", key="discount_input")
-    
-    gross_total = boxes * tp_box
-    discount_amount = gross_total * (discount / 100)
-    net_total = gross_total - discount_amount
-    
+        st.metric("💰 Gross Amount", f"₹{gross_total:,.2f}")
     with col2:
-        st.text_input("💰 Gross:", value=f"₹{gross_total:,.2f}", disabled=True, key="gross_display")
+        st.metric("📉 Discount", f"₹{discount_amount:,.2f}", delta=f"-{discount}%", delta_color="inverse")
     with col3:
-        st.text_input("✅ Net:", value=f"₹{net_total:,.2f}", disabled=True, key="net_display")
+        st.metric("✅ Net Amount", f"₹{net_total:,.2f}")
     
     st.markdown("---")
     
@@ -403,7 +421,7 @@ def main():
     # BUTTONS
     # ============================================================
     
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     
     with col1:
         if st.button("➕ Add Bill (Enter)", use_container_width=True, type="primary", key="add_btn"):
@@ -434,6 +452,7 @@ def main():
                 # Reset
                 st.session_state.selected_product = None
                 st.session_state.tp_box_value = 0.0
+                st.session_state.boxes_value = 0
                 st.rerun()
             else:
                 st.error("❌ Please select a product and enter quantity")
@@ -442,7 +461,16 @@ def main():
         if st.button("🔄 Refresh (Esc)", use_container_width=True, key="refresh_btn"):
             st.session_state.selected_product = None
             st.session_state.tp_box_value = 0.0
+            st.session_state.boxes_value = 0
             st.rerun()
+    
+    with col3:
+        if st.button("📋 Show Bills", use_container_width=True, key="show_bills_btn"):
+            if st.session_state.database["bills"]:
+                df = pd.DataFrame(st.session_state.database["bills"])
+                st.dataframe(df, use_container_width=True)
+            else:
+                st.info("No bills found")
     
     # ============================================================
     # EXPORT BUTTONS
@@ -493,18 +521,6 @@ def main():
                 save_database()
                 st.success(f"✅ Load form cleared for: {order_booker}")
                 st.rerun()
-    
-    # ============================================================
-    # SHOW BILLS
-    # ============================================================
-    
-    st.markdown("---")
-    if st.button("📋 Show Bills", use_container_width=True, key="show_bills_btn"):
-        if st.session_state.database["bills"]:
-            df = pd.DataFrame(st.session_state.database["bills"])
-            st.dataframe(df, use_container_width=True)
-        else:
-            st.info("No bills found")
     
     # ============================================================
     # FOOTER
