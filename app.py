@@ -108,7 +108,7 @@ def save_database():
         return False
 
 # ============================================================
-# EXCEL EXPORT - FIXED COLUMNS
+# EXCEL EXPORT
 # ============================================================
 
 def export_bill_excel(shop_name):
@@ -124,7 +124,6 @@ def export_bill_excel(shop_name):
     worksheet.set_portrait()
     worksheet.fit_to_pages(1, 1)
     
-    # Columns: Product, Code, Boxes, TP/Box, Gross, Discount %, Net
     worksheet.set_column("A:A", 40)
     worksheet.set_column("B:B", 10)
     worksheet.set_column("C:C", 10)
@@ -257,6 +256,17 @@ def add_keyboard_css():
         border-radius: 4px;
         font-size: 11px;
     }
+    /* PRODUCT NAME - BIG FONT SIZE FOR PRINTING */
+    .product-name {
+        font-size: 20px !important;
+        font-weight: bold !important;
+        color: #155724 !important;
+        margin: 10px 0 !important;
+        padding: 10px !important;
+        background-color: #d4edda !important;
+        border-radius: 8px !important;
+        border-left: 6px solid #28a745 !important;
+    }
     </style>
     
     <script>
@@ -361,14 +371,19 @@ def main():
         if product:
             st.session_state.selected_product = product
             st.session_state.tp_box_value = float(product["price"])
-            st.markdown(f"<h4 style='color:green;margin:0;'>✅ {product['name']}</h4>", unsafe_allow_html=True)
+            # Product name with BIG FONT SIZE - for printing
+            st.markdown(f"""
+            <div class="product-name">
+                ✅ {product['name']}
+            </div>
+            """, unsafe_allow_html=True)
         else:
             st.session_state.selected_product = None
             st.session_state.tp_box_value = 0.0
-            st.markdown("<b style='color:red;'>❌ Product Not Found</b>", unsafe_allow_html=True)
+            st.markdown("<b style='color:red;font-size:18px;'>❌ Product Not Found</b>", unsafe_allow_html=True)
     else:
         st.session_state.selected_product = None
-        st.markdown("<b style='color:red;'>⚠️ No Product Selected</b>", unsafe_allow_html=True)
+        st.markdown("<b style='color:red;font-size:18px;'>⚠️ No Product Selected</b>", unsafe_allow_html=True)
     
     # ============================================================
     # QUANTITY - ONLY BOXES
@@ -390,7 +405,6 @@ def main():
         key="tpbox_input"
     )
     
-    # Update session state if user manually edits
     if tp_box != st.session_state.tp_box_value:
         st.session_state.tp_box_value = tp_box
     
@@ -401,10 +415,9 @@ def main():
     discount = st.number_input("🎯 Discount %:", min_value=0.0, max_value=100.0, value=0.0, step=0.5, format="%.1f", key="discount_input")
     
     # ============================================================
-    # BILL TOTAL - Calculate and Display
+    # BILL TOTAL
     # ============================================================
     
-    # Calculate totals
     gross_total, discount_amount, net_total = calculate_totals(boxes, tp_box, discount)
     
     col1, col2, col3 = st.columns(3)
@@ -449,7 +462,6 @@ def main():
                 st.success(f"✅ Bill Added Successfully! Bill No: {bill['Bill No']}")
                 st.balloons()
                 
-                # Reset
                 st.session_state.selected_product = None
                 st.session_state.tp_box_value = 0.0
                 st.session_state.boxes_value = 0
