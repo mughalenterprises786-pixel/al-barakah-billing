@@ -1,6 +1,6 @@
 # ============================================================
 # AL-BARAKAH ENTERPRISES
-# BILLING SOFTWARE 2026 - STREAMLIT APP (FONT 18)
+# BILLING SOFTWARE 2026 - STREAMLIT APP
 # ============================================================
 
 import streamlit as st
@@ -108,7 +108,7 @@ def save_database():
         return False
 
 # ============================================================
-# EXCEL EXPORT
+# EXCEL EXPORT - COLAB FORMAT
 # ============================================================
 
 def export_bill_excel(shop_name):
@@ -120,42 +120,96 @@ def export_bill_excel(shop_name):
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet("Bill")
     
+    # ============================================================
+    # PAGE SETUP - COLAB FORMAT
+    # ============================================================
+    
     worksheet.set_paper(9)
     worksheet.set_portrait()
     worksheet.fit_to_pages(1, 1)
     
-    worksheet.set_column("A:A", 50)
-    worksheet.set_column("B:B", 12)
-    worksheet.set_column("C:C", 12)
-    worksheet.set_column("D:D", 16)
-    worksheet.set_column("E:E", 16)
-    worksheet.set_column("F:F", 14)
-    worksheet.set_column("G:G", 18)
+    # Column Widths - Same as Colab
+    worksheet.set_column("A:A", 40)
+    worksheet.set_column("B:B", 10)
+    worksheet.set_column("C:C", 10)
+    worksheet.set_column("D:D", 14)
+    worksheet.set_column("E:E", 14)
+    worksheet.set_column("F:F", 12)
+    worksheet.set_column("G:G", 16)
     
-    title = workbook.add_format({"bold": True, "font_size": 18, "align": "center", "border": 2})
-    header = workbook.add_format({"bold": True, "font_size": 14, "bg_color": "#D9EAD3", "align": "center", "border": 2})
-    cell = workbook.add_format({"font_size": 12, "border": 1, "align": "center"})
-    total = workbook.add_format({"bold": True, "font_size": 14, "bg_color": "#FFF2CC", "align": "center", "border": 2})
+    # ============================================================
+    # FORMATS - SAME AS COLAB
+    # ============================================================
+    
+    title = workbook.add_format({
+        "bold": True,
+        "font_size": 18,
+        "align": "center",
+        "border": 2
+    })
+    
+    header = workbook.add_format({
+        "bold": True,
+        "bg_color": "#D9EAD3",
+        "align": "center",
+        "border": 2
+    })
+    
+    cell = workbook.add_format({
+        "border": 1,
+        "align": "center"
+    })
+    
+    total = workbook.add_format({
+        "bold": True,
+        "bg_color": "#FFF2CC",
+        "align": "center",
+        "border": 2
+    })
+    
+    # ============================================================
+    # COMPANY HEADER - SAME AS COLAB
+    # ============================================================
     
     worksheet.merge_range("A1:G1", COMPANY_NAME, title)
     
+    # ============================================================
+    # BILL INFO - SAME AS COLAB
+    # ============================================================
+    
     first_bill = shop_bills[0]
+    
     worksheet.write("A3", "Shop Name", header)
     worksheet.write("B3", first_bill["Shop"], cell)
+    
     worksheet.write("D3", "Order Booker", header)
     worksheet.write("E3", first_bill["Order Booker"], cell)
+    
     worksheet.write("G3", "Bill No", header)
     worksheet.write("H3", first_bill["Bill No"], cell)
+    
     worksheet.write("G4", "Date", header)
     worksheet.write("H4", first_bill["Date"], cell)
     
+    # ============================================================
+    # TABLE HEADER - SAME AS COLAB
+    # ============================================================
+    
     row = 6
+    
     headers = ["Product", "Code", "Boxes", "TP/Box", "Gross", "Discount %", "Net"]
+    
     for col, value in enumerate(headers):
         worksheet.write(row, col, value, header)
+    
     row += 1
     
+    # ============================================================
+    # WRITE BILL DATA - SAME AS COLAB
+    # ============================================================
+    
     gross_total = 0
+    
     for bill in shop_bills:
         worksheet.write(row, 0, bill["Product"], cell)
         worksheet.write(row, 1, bill["Code"], cell)
@@ -164,53 +218,106 @@ def export_bill_excel(shop_name):
         worksheet.write(row, 4, bill["Gross"], cell)
         worksheet.write(row, 5, bill["Discount %"], cell)
         
+        # Net = Gross - Discount % (Excel Formula)
         excel_row = row + 1
-        worksheet.write_formula(row, 6, f"=E{excel_row}-(E{excel_row}*F{excel_row}/100)", cell)
+        worksheet.write_formula(
+            row, 6,
+            f"=E{excel_row}-(E{excel_row}*F{excel_row}/100)",
+            cell
+        )
         
         gross_total += bill["Gross"]
         row += 1
     
+    # ============================================================
+    # TOTAL ROW - SAME AS COLAB
+    # ============================================================
+    
     worksheet.write(row, 2, "TOTAL", total)
     worksheet.write(row, 4, gross_total, total)
     worksheet.write_blank(row, 5, None, total)
-    worksheet.write_formula(row, 6, f"=E{row+1}-(E{row+1}*F{row+1}/100)", total)
+    worksheet.write_formula(
+        row, 6,
+        f"=E{row+1}-(E{row+1}*F{row+1}/100)",
+        total
+    )
+    
+    # ============================================================
+    # SAVE
+    # ============================================================
     
     workbook.close()
     output.seek(0)
     return output
+
+# ============================================================
+# EXPORT LOAD FORM - COLAB FORMAT
+# ============================================================
 
 def export_load_form_excel(booker):
     booker_bills = [b for b in st.session_state.database["bills"] if b["Order Booker"].strip() == booker.strip()]
     if not booker_bills:
         return None
     
+    # Create summary - Same as Colab
     summary = {}
     for bill in booker_bills:
         code = bill["Code"]
         if code not in summary:
-            summary[code] = {"Product": bill["Product"], "Boxes": 0}
+            summary[code] = {
+                "Product": bill["Product"],
+                "Boxes": 0
+            }
         summary[code]["Boxes"] += bill["Boxes"]
     
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet("Load Form")
     
-    title = workbook.add_format({"bold": True, "font_size": 18, "align": "center", "border": 2})
-    header = workbook.add_format({"bold": True, "font_size": 14, "bg_color": "#D9EAD3", "align": "center", "border": 2})
-    cell = workbook.add_format({"font_size": 12, "border": 1, "align": "center"})
-    total = workbook.add_format({"bold": True, "font_size": 14, "bg_color": "#FFF2CC", "align": "center", "border": 2})
+    # ============================================================
+    # FORMATS - SAME AS COLAB
+    # ============================================================
     
-    worksheet.set_column("A:A", 50)
-    worksheet.set_column("B:B", 15)
+    title = workbook.add_format({
+        "bold": True,
+        "font_size": 16,
+        "align": "center",
+        "border": 2
+    })
+    
+    header = workbook.add_format({
+        "bold": True,
+        "bg_color": "#D9EAD3",
+        "align": "center",
+        "border": 2
+    })
+    
+    cell = workbook.add_format({
+        "border": 1,
+        "align": "center"
+    })
+    
+    total = workbook.add_format({
+        "bold": True,
+        "bg_color": "#FFF2CC",
+        "align": "center",
+        "border": 2
+    })
+    
+    worksheet.set_column("A:A", 40)
+    worksheet.set_column("B:B", 12)
     
     worksheet.merge_range("A1:B1", COMPANY_NAME, title)
+    
     worksheet.write("A3", "Order Booker", header)
     worksheet.write("B3", booker, cell)
+    
     worksheet.write("A5", "Product", header)
     worksheet.write("B5", "Boxes", header)
     
     row = 5
     total_boxes = 0
+    
     for item in summary.values():
         worksheet.write(row, 0, item["Product"], cell)
         worksheet.write(row, 1, item["Boxes"], cell)
@@ -225,26 +332,23 @@ def export_load_form_excel(booker):
     return output
 
 # ============================================================
-# CSS - FONT SIZE 18
+# CSS
 # ============================================================
 
 def add_keyboard_css():
     st.markdown("""
     <style>
-    /* ALL LABELS - 16px */
     .stTextInput label, .stNumberInput label {
         font-size: 16px !important;
         font-weight: bold !important;
     }
     
-    /* ALL INPUTS - 16px */
     .stTextInput input, .stNumberInput input {
         font-size: 16px !important;
         padding: 8px 12px !important;
         height: 44px !important;
     }
     
-    /* BUTTONS - 16px */
     .stButton button {
         font-size: 16px !important;
         padding: 10px 16px !important;
@@ -262,7 +366,6 @@ def add_keyboard_css():
         transition: 0.2s;
     }
     
-    /* PRODUCT NAME - 18px */
     .product-name {
         font-size: 18px !important;
         font-weight: bold !important;
@@ -275,7 +378,6 @@ def add_keyboard_css():
         text-align: left !important;
     }
     
-    /* SHOP NAME - 18px */
     .shop-name {
         font-size: 18px !important;
         font-weight: bold !important;
@@ -287,7 +389,6 @@ def add_keyboard_css():
         border-left: 6px solid #007bff !important;
     }
     
-    /* METRIC CARDS */
     .stMetric label {
         font-size: 16px !important;
         font-weight: bold !important;
@@ -297,7 +398,6 @@ def add_keyboard_css():
         font-weight: bold !important;
     }
     
-    /* KEYBOARD HINTS */
     .keyboard-hint {
         font-size: 14px !important;
         color: #666;
@@ -315,12 +415,8 @@ def add_keyboard_css():
         border-radius: 4px;
     }
     
-    /* HEADER */
     h1 {
         font-size: 32px !important;
-    }
-    h2 {
-        font-size: 24px !important;
     }
     </style>
     
@@ -387,8 +483,8 @@ def main():
     st.markdown(f"""
     <div style="background: linear-gradient(135deg, #1a472a 0%, #2d8a4e 100%); 
                 padding: 25px; border-radius: 12px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 34px;">{COMPANY_NAME}</h1>
-        <p style="color: #ffd700; margin: 5px 0 0 0; font-size: 18px;">🧾 Billing Software 2026</p>
+        <h1 style="color: white; margin: 0;">{COMPANY_NAME}</h1>
+        <p style="color: #ffd700; margin: 5px 0 0 0;">🧾 Billing Software 2026</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -410,7 +506,6 @@ def main():
     
     shop_name = st.text_input("🏪 Shop:", placeholder="Enter Shop Name", key="shop_input")
     
-    # Show Shop Name in 18px if entered
     if shop_name.strip():
         st.markdown(f"""
         <div class="shop-name">
@@ -435,7 +530,6 @@ def main():
         if product:
             st.session_state.selected_product = product
             st.session_state.tp_box_value = float(product["price"])
-            # Product name - 18px
             st.markdown(f"""
             <div class="product-name">
                 ✅ {product['name']}
