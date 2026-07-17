@@ -1,6 +1,6 @@
 # ============================================================
 # AL-BARAKAH ENTERPRISES
-# BILLING SOFTWARE 2026 - STREAMLIT APP
+# BILLING SOFTWARE 2026 - TABLE DESIGN
 # ============================================================
 
 import streamlit as st
@@ -89,14 +89,12 @@ def init_session():
         else:
             st.session_state.database = {"next_bill_no": 1, "bills": []}
     
-    if 'selected_product' not in st.session_state:
-        st.session_state.selected_product = None
+    # Store selected products with quantities
+    if 'selected_products' not in st.session_state:
+        st.session_state.selected_products = {}
     
-    if 'tp_box_value' not in st.session_state:
-        st.session_state.tp_box_value = 0.0
-    
-    if 'boxes_value' not in st.session_state:
-        st.session_state.boxes_value = 0
+    if 'grand_total' not in st.session_state:
+        st.session_state.grand_total = 0
 
 def save_database():
     try:
@@ -108,24 +106,21 @@ def save_database():
         return False
 
 # ============================================================
-# EXCEL EXPORT - YOUR FORMAT
+# EXCEL EXPORT - SAME FORMAT AS BEFORE
 # ============================================================
 
-def export_bill_excel(shop_name):
-    shop_bills = [b for b in st.session_state.database["bills"] if b["Shop"].strip() == shop_name.strip()]
-    if not shop_bills:
+def export_bill_excel(shop_name, bills_data):
+    if not bills_data:
         return None
     
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet("Bill")
     
-    # Page Setup
     worksheet.set_paper(9)
     worksheet.set_portrait()
     worksheet.fit_to_pages(1, 1)
     
-    # Column Widths - As Requested
     worksheet.set_column("A:A", 47.86)
     worksheet.set_column("B:B", 23.71)
     worksheet.set_column("C:C", 12.71)
@@ -135,7 +130,6 @@ def export_bill_excel(shop_name):
     worksheet.set_column("G:G", 13.14)
     worksheet.set_column("H:H", 14.14)
     
-    # Formats
     title = workbook.add_format({
         "bold": True,
         "font_size": 18,
@@ -151,14 +145,12 @@ def export_bill_excel(shop_name):
         "border": 2
     })
     
-    # Product Names: Left Aligned, Font 14
     cell_left = workbook.add_format({
         "font_size": 14,
         "border": 1,
         "align": "left"
     })
     
-    # All Numbers: Center Aligned, Font 14
     cell_center = workbook.add_format({
         "font_size": 14,
         "border": 1,
@@ -173,12 +165,9 @@ def export_bill_excel(shop_name):
         "border": 2
     })
     
-    # Company Header
     worksheet.merge_range("A1:H1", COMPANY_NAME, title)
     
-    # Bill Info
-    first_bill = shop_bills[0]
-    
+    first_bill = bills_data[0]
     worksheet.write("A3", "Shop Name", header)
     worksheet.write("B3", first_bill["Shop"], cell_center)
     worksheet.write("D3", "Booker", header)
@@ -188,7 +177,6 @@ def export_bill_excel(shop_name):
     worksheet.write("G4", "Date", header)
     worksheet.write("H4", first_bill["Date"], cell_center)
     
-    # Table Header
     row = 6
     headers = ["Product", "Code", "Boxes", "TP/Box", "Gross", "Discount %", "Net"]
     
@@ -197,11 +185,10 @@ def export_bill_excel(shop_name):
     
     row += 1
     
-    # Write Bill Data
     gross_total = 0
     
-    for bill in shop_bills:
-        worksheet.write(row, 0, bill["Product"], cell_left)      # Left aligned
+    for bill in bills_data:
+        worksheet.write(row, 0, bill["Product"], cell_left)
         worksheet.write(row, 1, bill["Code"], cell_center)
         worksheet.write(row, 2, bill["Boxes"], cell_center)
         worksheet.write(row, 3, bill["TP/Box"], cell_center)
@@ -218,7 +205,6 @@ def export_bill_excel(shop_name):
         gross_total += bill["Gross"]
         row += 1
     
-    # Total Row
     worksheet.write(row, 2, "TOTAL", total)
     worksheet.write(row, 4, gross_total, total)
     worksheet.write_blank(row, 5, None, total)
@@ -232,13 +218,12 @@ def export_bill_excel(shop_name):
     output.seek(0)
     return output
 
-def export_load_form_excel(booker):
-    booker_bills = [b for b in st.session_state.database["bills"] if b["Order Booker"].strip() == booker.strip()]
-    if not booker_bills:
+def export_load_form_excel(booker, bills_data):
+    if not bills_data:
         return None
     
     summary = {}
-    for bill in booker_bills:
+    for bill in bills_data:
         code = bill["Code"]
         if code not in summary:
             summary[code] = {
@@ -337,27 +322,31 @@ def add_css():
         height: 48px !important;
     }
     
-    .product-name {
-        font-size: 18px !important;
-        font-weight: bold !important;
-        color: #155724 !important;
-        margin: 8px 0 !important;
-        padding: 12px 15px !important;
-        background-color: #d4edda !important;
-        border-radius: 8px !important;
-        border-left: 6px solid #28a745 !important;
-        text-align: left !important;
+    /* Product table styling */
+    .product-table {
+        font-size: 14px !important;
     }
     
-    .shop-name {
-        font-size: 18px !important;
+    .product-table th {
+        background-color: #D9EAD3 !important;
         font-weight: bold !important;
-        color: #004085 !important;
-        margin: 5px 0 !important;
-        padding: 10px 15px !important;
-        background-color: #cce5ff !important;
+        text-align: center !important;
+        padding: 8px !important;
+    }
+    
+    .product-table td {
+        padding: 6px !important;
+        border: 1px solid #ddd !important;
+    }
+    
+    .grand-total {
+        font-size: 20px !important;
+        font-weight: bold !important;
+        color: #155724 !important;
+        background-color: #d4edda !important;
+        padding: 10px !important;
         border-radius: 8px !important;
-        border-left: 6px solid #007bff !important;
+        text-align: center !important;
     }
     
     .stMetric label {
@@ -397,174 +386,246 @@ def main():
     
     st.markdown("---")
     
-    # Bill Information
-    col1, col2 = st.columns(2)
+    # ============================================================
+    # BILL INFORMATION
+    # ============================================================
+    
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.text_input("📌 Bill No:", value=st.session_state.database["next_bill_no"], disabled=True)
     with col2:
         st.text_input("📅 Date:", value=datetime.now().strftime("%d-%m-%Y"), disabled=True)
-    
-    # Customer Information
-    shop_name = st.text_input("🏪 Shop:", placeholder="Enter Shop Name", key="shop_input")
-    
-    if shop_name.strip():
-        st.markdown(f"""
-        <div class="shop-name">
-            🏪 {shop_name}
-        </div>
-        """, unsafe_allow_html=True)
-    
-    order_booker = st.text_input("📝 Booker:", placeholder="Enter Order Booker", key="booker_input")
-    salesman = st.text_input("👤 Salesman:", placeholder="Enter Salesman", key="salesman_input")
-    delivery_man = st.text_input("🚚 Delivery:", placeholder="Enter Delivery Man", key="delivery_input")
-    
-    st.markdown("---")
-    
-    # Product Selection
-    code = st.text_input("🔢 Code:", placeholder="Product Code", key="code_input")
-    
-    if code:
-        product = next((p for p in PRODUCTS if p["code"] == code), None)
-        if product:
-            st.session_state.selected_product = product
-            st.session_state.tp_box_value = float(product["price"])
-            st.markdown(f"""
-            <div class="product-name">
-                ✅ {product['name']}
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.session_state.selected_product = None
-            st.session_state.tp_box_value = 0.0
-            st.markdown("<div style='font-size:18px;color:red;font-weight:bold;padding:12px;'>❌ Product Not Found</div>", unsafe_allow_html=True)
-    else:
-        st.session_state.selected_product = None
-        st.markdown("<div style='font-size:18px;color:red;font-weight:bold;padding:12px;'>⚠️ No Product Selected</div>", unsafe_allow_html=True)
-    
-    # Quantity
-    boxes = st.number_input("📦 Boxes:", min_value=0, value=st.session_state.boxes_value, step=1, key="boxes_input")
-    st.session_state.boxes_value = boxes
-    
-    # Price
-    tp_box = st.number_input(
-        "💰 TP/Box:",
-        min_value=0.0,
-        value=st.session_state.tp_box_value,
-        step=1.0,
-        format="%.2f",
-        key="tpbox_input"
-    )
-    
-    if tp_box != st.session_state.tp_box_value:
-        st.session_state.tp_box_value = tp_box
-    
-    # Discount
-    discount = st.number_input("🎯 Discount %:", min_value=0.0, max_value=100.0, value=0.0, step=0.5, format="%.1f", key="discount_input")
-    
-    # Bill Total
-    gross_total = boxes * tp_box
-    discount_amount = gross_total * (discount / 100)
-    net_total = gross_total - discount_amount
-    
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("💰 Gross Amount", f"₹{gross_total:,.2f}")
-    with col2:
-        st.metric("📉 Discount", f"₹{discount_amount:,.2f}", delta=f"-{discount}%", delta_color="inverse")
     with col3:
-        st.metric("✅ Net Amount", f"₹{net_total:,.2f}")
+        shop_name = st.text_input("🏪 Shop:", placeholder="Enter Shop Name", key="shop_input")
+    with col4:
+        order_booker = st.text_input("📝 Booker:", placeholder="Enter Order Booker", key="booker_input")
+    
+    # ============================================================
+    # PRODUCT TABLE - NEW DESIGN
+    # ============================================================
+    
+    st.markdown("### 📋 Select Products")
+    
+    # Create columns for table
+    col1, col2, col3, col4, col5 = st.columns([0.5, 3, 1.5, 1.5, 2])
+    
+    # Headers
+    with col1:
+        st.markdown("**✅**")
+    with col2:
+        st.markdown("**Product Name**")
+    with col3:
+        st.markdown("**Price/Box**")
+    with col4:
+        st.markdown("**Boxes**")
+    with col5:
+        st.markdown("**Total**")
     
     st.markdown("---")
     
-    # Buttons
+    # Initialize grand total
+    grand_total = 0
+    
+    # Display each product with checkbox and quantity
+    for idx, product in enumerate(PRODUCTS):
+        # Create a unique key for each product
+        key_prefix = f"p_{product['code']}"
+        
+        col1, col2, col3, col4, col5 = st.columns([0.5, 3, 1.5, 1.5, 2])
+        
+        with col1:
+            # Checkbox - Green tick when selected
+            selected = st.checkbox(
+                "", 
+                key=f"select_{key_prefix}",
+                value=st.session_state.selected_products.get(f"select_{key_prefix}", False)
+            )
+            st.session_state.selected_products[f"select_{key_prefix}"] = selected
+        
+        with col2:
+            st.markdown(f"{product['name']}")
+        
+        with col3:
+            st.markdown(f"₹{product['price']:.2f}")
+        
+        with col4:
+            if selected:
+                boxes = st.number_input(
+                    "", 
+                    min_value=0, 
+                    value=st.session_state.selected_products.get(f"boxes_{key_prefix}", 0),
+                    step=1,
+                    key=f"boxes_{key_prefix}"
+                )
+                st.session_state.selected_products[f"boxes_{key_prefix}"] = boxes
+            else:
+                st.markdown("—")
+                st.session_state.selected_products[f"boxes_{key_prefix}"] = 0
+        
+        with col5:
+            if selected:
+                total = product['price'] * st.session_state.selected_products.get(f"boxes_{key_prefix}", 0)
+                st.markdown(f"**₹{total:,.2f}**")
+                grand_total += total
+            else:
+                st.markdown("₹0.00")
+    
+    # ============================================================
+    # GRAND TOTAL
+    # ============================================================
+    
+    st.markdown("---")
+    
+    st.markdown(f"""
+    <div class="grand-total">
+        🧾 Grand Total: ₹{grand_total:,.2f}
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.session_state.grand_total = grand_total
+    
+    # ============================================================
+    # DISCOUNT & NET
+    # ============================================================
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        discount = st.number_input("🎯 Discount %:", min_value=0.0, max_value=100.0, value=0.0, step=0.5, format="%.1f", key="discount_input")
+    
+    discount_amount = grand_total * (discount / 100)
+    net_total = grand_total - discount_amount
+    
+    with col2:
+        st.metric("💰 Gross Amount", f"₹{grand_total:,.2f}")
+    with col3:
+        st.metric("✅ Net Amount", f"₹{net_total:,.2f}", delta=f"-{discount_amount:,.2f}" if discount > 0 else None)
+    
+    st.markdown("---")
+    
+    # ============================================================
+    # BUTTONS
+    # ============================================================
+    
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("➕ Add Bill", use_container_width=True, type="primary", key="add_btn"):
-            if st.session_state.selected_product and boxes > 0:
-                bill = {
-                    "Bill No": st.session_state.database["next_bill_no"],
-                    "Date": datetime.now().strftime("%d-%m-%Y"),
-                    "Shop": shop_name,
-                    "Order Booker": order_booker,
-                    "Salesman": salesman,
-                    "Delivery Man": delivery_man,
-                    "Code": st.session_state.selected_product["code"],
-                    "Product": st.session_state.selected_product["name"],
-                    "Boxes": boxes,
-                    "TP/Box": tp_box,
-                    "Discount %": discount,
-                    "Gross": gross_total,
-                    "Net": net_total
-                }
+        if st.button("➕ Add Bill", use_container_width=True, type="primary"):
+            # Get selected products with quantities
+            selected_items = []
+            for idx, product in enumerate(PRODUCTS):
+                key_prefix = f"p_{product['code']}"
+                if st.session_state.selected_products.get(f"select_{key_prefix}", False):
+                    boxes = st.session_state.selected_products.get(f"boxes_{key_prefix}", 0)
+                    if boxes > 0:
+                        selected_items.append({
+                            "code": product["code"],
+                            "name": product["name"],
+                            "price": product["price"],
+                            "boxes": boxes,
+                            "total": product["price"] * boxes
+                        })
+            
+            if not selected_items:
+                st.error("❌ Please select at least one product with quantity > 0")
+            elif shop_name.strip() == "":
+                st.error("❌ Please enter Shop Name")
+            elif order_booker.strip() == "":
+                st.error("❌ Please enter Booker name")
+            else:
+                # Create bill entries
+                for item in selected_items:
+                    bill = {
+                        "Bill No": st.session_state.database["next_bill_no"],
+                        "Date": datetime.now().strftime("%d-%m-%Y"),
+                        "Shop": shop_name,
+                        "Order Booker": order_booker,
+                        "Salesman": "",
+                        "Delivery Man": "",
+                        "Code": item["code"],
+                        "Product": item["name"],
+                        "Boxes": item["boxes"],
+                        "TP/Box": item["price"],
+                        "Discount %": discount,
+                        "Gross": item["total"],
+                        "Net": item["total"] - (item["total"] * discount / 100)
+                    }
+                    st.session_state.database["bills"].append(bill)
                 
-                st.session_state.database["bills"].append(bill)
                 st.session_state.database["next_bill_no"] += 1
                 save_database()
                 
-                st.success(f"✅ Bill Added Successfully! Bill No: {bill['Bill No']}")
+                st.success(f"✅ Bill Added Successfully! Bill No: {st.session_state.database['next_bill_no'] - 1}")
                 st.balloons()
                 
-                st.session_state.selected_product = None
-                st.session_state.tp_box_value = 0.0
-                st.session_state.boxes_value = 0
+                # Reset selections
+                for idx, product in enumerate(PRODUCTS):
+                    key_prefix = f"p_{product['code']}"
+                    st.session_state.selected_products[f"select_{key_prefix}"] = False
+                    st.session_state.selected_products[f"boxes_{key_prefix}"] = 0
+                
                 st.rerun()
-            else:
-                st.error("❌ Please select a product and enter quantity")
     
     with col2:
-        if st.button("🔄 Refresh", use_container_width=True, key="refresh_btn"):
-            st.session_state.selected_product = None
-            st.session_state.tp_box_value = 0.0
-            st.session_state.boxes_value = 0
+        if st.button("🔄 Refresh", use_container_width=True):
+            for idx, product in enumerate(PRODUCTS):
+                key_prefix = f"p_{product['code']}"
+                st.session_state.selected_products[f"select_{key_prefix}"] = False
+                st.session_state.selected_products[f"boxes_{key_prefix}"] = 0
             st.rerun()
     
     with col3:
-        if st.button("📋 Show Bills", use_container_width=True, key="show_bills_btn"):
+        if st.button("📋 Show Bills", use_container_width=True):
             if st.session_state.database["bills"]:
                 df = pd.DataFrame(st.session_state.database["bills"])
                 st.dataframe(df, use_container_width=True)
             else:
                 st.info("No bills found")
     
-    # Export Buttons
+    # ============================================================
+    # EXPORT BUTTONS
+    # ============================================================
+    
     st.markdown("---")
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("📄 Export Bill (Excel)", use_container_width=True, key="export_bill_btn"):
+        if st.button("📄 Export Bill (Excel)", use_container_width=True):
             if shop_name.strip() == "":
                 st.error("❌ Please enter Shop Name first")
             else:
-                excel_file = export_bill_excel(shop_name)
-                if excel_file:
-                    st.download_button(
-                        label="📥 Download Excel",
-                        data=excel_file,
-                        file_name=f"{shop_name}.xlsx",
-                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    )
+                shop_bills = [b for b in st.session_state.database["bills"] if b["Shop"].strip() == shop_name.strip()]
+                if shop_bills:
+                    excel_file = export_bill_excel(shop_name, shop_bills)
+                    if excel_file:
+                        st.download_button(
+                            label="📥 Download Excel",
+                            data=excel_file,
+                            file_name=f"{shop_name}.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        )
                 else:
                     st.error(f"❌ No bills found for: {shop_name}")
     
     with col2:
-        if st.button("📦 Export Load Form (Excel)", use_container_width=True, key="export_load_btn"):
+        if st.button("📦 Export Load Form (Excel)", use_container_width=True):
             if order_booker.strip() == "":
                 st.error("❌ Please enter Order Booker name")
             else:
-                excel_file = export_load_form_excel(order_booker)
-                if excel_file:
-                    st.download_button(
-                        label="📥 Download Excel",
-                        data=excel_file,
-                        file_name=f"{order_booker}_Load_Form.xlsx",
-                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    )
+                booker_bills = [b for b in st.session_state.database["bills"] if b["Order Booker"].strip() == order_booker.strip()]
+                if booker_bills:
+                    excel_file = export_load_form_excel(order_booker, booker_bills)
+                    if excel_file:
+                        st.download_button(
+                            label="📥 Download Excel",
+                            data=excel_file,
+                            file_name=f"{order_booker}_Load_Form.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        )
                 else:
                     st.error(f"❌ No bills found for: {order_booker}")
     
     with col3:
-        if st.button("🗑 Refresh Load Form", use_container_width=True, key="refresh_load_btn"):
+        if st.button("🗑 Refresh Load Form", use_container_width=True):
             if order_booker.strip() == "":
                 st.error("❌ Please enter Order Booker name")
             else:
@@ -574,7 +635,10 @@ def main():
                 st.success(f"✅ Load form cleared for: {order_booker}")
                 st.rerun()
     
-    # Footer
+    # ============================================================
+    # FOOTER
+    # ============================================================
+    
     st.markdown("---")
     st.markdown(f"""
     <div style="text-align: center; color: #666; font-size: 15px;">
