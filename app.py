@@ -1,6 +1,6 @@
 # ============================================================
 # AL-BARAKAH ENTERPRISES
-# BILLING SOFTWARE 2026 - STREAMLIT APP (BIG FONTS)
+# BILLING SOFTWARE 2026 - STREAMLIT APP (FONT 18)
 # ============================================================
 
 import streamlit as st
@@ -124,7 +124,6 @@ def export_bill_excel(shop_name):
     worksheet.set_portrait()
     worksheet.fit_to_pages(1, 1)
     
-    # BIGGER COLUMN WIDTHS
     worksheet.set_column("A:A", 50)
     worksheet.set_column("B:B", 12)
     worksheet.set_column("C:C", 12)
@@ -133,7 +132,7 @@ def export_bill_excel(shop_name):
     worksheet.set_column("F:F", 14)
     worksheet.set_column("G:G", 18)
     
-    title = workbook.add_format({"bold": True, "font_size": 20, "align": "center", "border": 2})
+    title = workbook.add_format({"bold": True, "font_size": 18, "align": "center", "border": 2})
     header = workbook.add_format({"bold": True, "font_size": 14, "bg_color": "#D9EAD3", "align": "center", "border": 2})
     cell = workbook.add_format({"font_size": 12, "border": 1, "align": "center"})
     total = workbook.add_format({"bold": True, "font_size": 14, "bg_color": "#FFF2CC", "align": "center", "border": 2})
@@ -226,73 +225,75 @@ def export_load_form_excel(booker):
     return output
 
 # ============================================================
-# CSS - BIG FONTS FOR PRINTING
+# CSS - FONT SIZE 18
 # ============================================================
 
 def add_keyboard_css():
     st.markdown("""
     <style>
-    /* BIG FONTS FOR ALL FIELDS */
+    /* ALL LABELS - 16px */
     .stTextInput label, .stNumberInput label {
         font-size: 16px !important;
         font-weight: bold !important;
     }
     
+    /* ALL INPUTS - 16px */
     .stTextInput input, .stNumberInput input {
-        font-size: 18px !important;
-        padding: 10px !important;
-        height: 50px !important;
+        font-size: 16px !important;
+        padding: 8px 12px !important;
+        height: 44px !important;
     }
     
+    /* BUTTONS - 16px */
     .stButton button {
-        font-size: 18px !important;
-        padding: 12px 20px !important;
-        height: 55px !important;
+        font-size: 16px !important;
+        padding: 10px 16px !important;
+        height: 48px !important;
     }
     
     input:focus, textarea:focus {
         border: 3px solid #2d8a4e !important;
-        box-shadow: 0 0 15px rgba(45, 138, 78, 0.4) !important;
+        box-shadow: 0 0 15px rgba(45, 138, 78, 0.3) !important;
         outline: none !important;
     }
     
     .stButton button:hover {
-        transform: scale(1.03);
+        transform: scale(1.02);
         transition: 0.2s;
     }
     
-    /* PRODUCT NAME - BIG FONT */
+    /* PRODUCT NAME - 18px */
     .product-name {
-        font-size: 28px !important;
+        font-size: 18px !important;
         font-weight: bold !important;
         color: #155724 !important;
-        margin: 12px 0 !important;
-        padding: 15px !important;
+        margin: 8px 0 !important;
+        padding: 12px 15px !important;
         background-color: #d4edda !important;
-        border-radius: 10px !important;
-        border-left: 8px solid #28a745 !important;
-        text-align: center !important;
+        border-radius: 8px !important;
+        border-left: 6px solid #28a745 !important;
+        text-align: left !important;
     }
     
-    /* SHOP NAME - BIG FONT */
+    /* SHOP NAME - 18px */
     .shop-name {
-        font-size: 24px !important;
+        font-size: 18px !important;
         font-weight: bold !important;
         color: #004085 !important;
         margin: 5px 0 !important;
-        padding: 10px !important;
+        padding: 10px 15px !important;
         background-color: #cce5ff !important;
         border-radius: 8px !important;
         border-left: 6px solid #007bff !important;
     }
     
-    /* METRIC CARDS - BIG FONT */
+    /* METRIC CARDS */
     .stMetric label {
         font-size: 16px !important;
         font-weight: bold !important;
     }
     .stMetric div {
-        font-size: 28px !important;
+        font-size: 24px !important;
         font-weight: bold !important;
     }
     
@@ -301,7 +302,7 @@ def add_keyboard_css():
         font-size: 14px !important;
         color: #666;
         background: #f0f0f0;
-        padding: 6px 12px;
+        padding: 4px 10px;
         border-radius: 4px;
         display: inline-block;
         margin: 2px;
@@ -310,25 +311,16 @@ def add_keyboard_css():
         font-size: 14px !important;
         background: #28a745;
         color: white;
-        padding: 4px 12px;
+        padding: 4px 10px;
         border-radius: 4px;
     }
     
-    /* EXPANDER HEADER */
-    .streamlit-expanderHeader {
-        font-size: 18px !important;
-        font-weight: bold !important;
-    }
-    
-    /* HEADER TITLE */
+    /* HEADER */
     h1 {
-        font-size: 36px !important;
+        font-size: 32px !important;
     }
     h2 {
-        font-size: 28px !important;
-    }
-    h3 {
-        font-size: 22px !important;
+        font-size: 24px !important;
     }
     </style>
     
@@ -358,7 +350,7 @@ def add_keyboard_css():
     });
     </script>
     
-    <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; border: 1px solid #ddd;">
+    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; border: 1px solid #ddd;">
         <span class="keyboard-hint">⬆⬇ Arrow Keys</span>
         <span class="keyboard-hint">↹ Tab / Shift+Tab</span>
         <span class="enter-hint">↵ Enter = Add Bill</span>
@@ -394,9 +386,9 @@ def main():
     # Header
     st.markdown(f"""
     <div style="background: linear-gradient(135deg, #1a472a 0%, #2d8a4e 100%); 
-                padding: 30px; border-radius: 12px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 40px;">{COMPANY_NAME}</h1>
-        <p style="color: #ffd700; margin: 8px 0 0 0; font-size: 22px;">🧾 Billing Software 2026</p>
+                padding: 25px; border-radius: 12px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 34px;">{COMPANY_NAME}</h1>
+        <p style="color: #ffd700; margin: 5px 0 0 0; font-size: 18px;">🧾 Billing Software 2026</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -413,12 +405,12 @@ def main():
         st.text_input("📅 Date:", value=datetime.now().strftime("%d-%m-%Y"), disabled=True)
     
     # ============================================================
-    # CUSTOMER INFORMATION - BIG SHOP NAME
+    # CUSTOMER INFORMATION
     # ============================================================
     
     shop_name = st.text_input("🏪 Shop:", placeholder="Enter Shop Name", key="shop_input")
     
-    # Show Shop Name in BIG FONT if entered
+    # Show Shop Name in 18px if entered
     if shop_name.strip():
         st.markdown(f"""
         <div class="shop-name">
@@ -443,7 +435,7 @@ def main():
         if product:
             st.session_state.selected_product = product
             st.session_state.tp_box_value = float(product["price"])
-            # Product name with BIG FONT
+            # Product name - 18px
             st.markdown(f"""
             <div class="product-name">
                 ✅ {product['name']}
@@ -452,10 +444,10 @@ def main():
         else:
             st.session_state.selected_product = None
             st.session_state.tp_box_value = 0.0
-            st.markdown("<div style='font-size:24px;color:red;font-weight:bold;padding:15px;'>❌ Product Not Found</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size:18px;color:red;font-weight:bold;padding:12px;'>❌ Product Not Found</div>", unsafe_allow_html=True)
     else:
         st.session_state.selected_product = None
-        st.markdown("<div style='font-size:24px;color:red;font-weight:bold;padding:15px;'>⚠️ No Product Selected</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size:18px;color:red;font-weight:bold;padding:12px;'>⚠️ No Product Selected</div>", unsafe_allow_html=True)
     
     # ============================================================
     # QUANTITY - ONLY BOXES
@@ -487,7 +479,7 @@ def main():
     discount = st.number_input("🎯 Discount %:", min_value=0.0, max_value=100.0, value=0.0, step=0.5, format="%.1f", key="discount_input")
     
     # ============================================================
-    # BILL TOTAL - BIG METRICS
+    # BILL TOTAL
     # ============================================================
     
     gross_total, discount_amount, net_total = calculate_totals(boxes, tp_box, discount)
@@ -503,7 +495,7 @@ def main():
     st.markdown("---")
     
     # ============================================================
-    # BUTTONS - BIG
+    # BUTTONS
     # ============================================================
     
     col1, col2, col3 = st.columns(3)
@@ -612,9 +604,9 @@ def main():
     
     st.markdown("---")
     st.markdown(f"""
-    <div style="text-align: center; color: #666; font-size: 16px;">
+    <div style="text-align: center; color: #666; font-size: 15px;">
         <p>📦 Products: {len(PRODUCTS)} | 🧾 Bills: {len(st.session_state.database['bills'])} | 📌 Next Bill: {st.session_state.database['next_bill_no']}</p>
-        <p style="font-size: 14px; margin-top: 5px;">
+        <p style="font-size: 13px; margin-top: 5px;">
             ⌨️ Tab: Next Field | Shift+Tab: Previous Field | Enter: Add Bill | Esc: Refresh
         </p>
     </div>
