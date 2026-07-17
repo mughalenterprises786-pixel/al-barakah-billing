@@ -1,6 +1,6 @@
 # ============================================================
 # AL-BARAKAH ENTERPRISES
-# BILLING SOFTWARE 2026 - STREAMLIT APP
+# BILLING SOFTWARE 2026 - STREAMLIT APP (FULL SIZE EXCEL)
 # ============================================================
 
 import streamlit as st
@@ -108,7 +108,7 @@ def save_database():
         return False
 
 # ============================================================
-# EXCEL EXPORT - COLAB FORMAT
+# EXCEL EXPORT - FULL SIZE
 # ============================================================
 
 def export_bill_excel(shop_name):
@@ -121,60 +121,66 @@ def export_bill_excel(shop_name):
     worksheet = workbook.add_worksheet("Bill")
     
     # ============================================================
-    # PAGE SETUP - COLAB FORMAT
+    # PAGE SETUP
     # ============================================================
     
     worksheet.set_paper(9)
     worksheet.set_portrait()
     worksheet.fit_to_pages(1, 1)
     
-    # Column Widths - Same as Colab
-    worksheet.set_column("A:A", 40)
-    worksheet.set_column("B:B", 10)
-    worksheet.set_column("C:C", 10)
-    worksheet.set_column("D:D", 14)
-    worksheet.set_column("E:E", 14)
-    worksheet.set_column("F:F", 12)
-    worksheet.set_column("G:G", 16)
+    # ============================================================
+    # FULL SIZE COLUMN WIDTHS
+    # ============================================================
+    
+    worksheet.set_column("A:A", 60)  # Product - Full width
+    worksheet.set_column("B:B", 12)  # Code
+    worksheet.set_column("C:C", 12)  # Boxes
+    worksheet.set_column("D:D", 16)  # TP/Box
+    worksheet.set_column("E:E", 16)  # Gross
+    worksheet.set_column("F:F", 14)  # Discount %
+    worksheet.set_column("G:G", 20)  # Net
     
     # ============================================================
-    # FORMATS - SAME AS COLAB
+    # FORMATS - BIG FONTS
     # ============================================================
     
     title = workbook.add_format({
         "bold": True,
-        "font_size": 18,
+        "font_size": 20,
         "align": "center",
         "border": 2
     })
     
     header = workbook.add_format({
         "bold": True,
+        "font_size": 14,
         "bg_color": "#D9EAD3",
         "align": "center",
         "border": 2
     })
     
     cell = workbook.add_format({
+        "font_size": 14,
         "border": 1,
         "align": "center"
     })
     
     total = workbook.add_format({
         "bold": True,
+        "font_size": 14,
         "bg_color": "#FFF2CC",
         "align": "center",
         "border": 2
     })
     
     # ============================================================
-    # COMPANY HEADER - SAME AS COLAB
+    # COMPANY HEADER
     # ============================================================
     
     worksheet.merge_range("A1:G1", COMPANY_NAME, title)
     
     # ============================================================
-    # BILL INFO - SAME AS COLAB
+    # BILL INFO
     # ============================================================
     
     first_bill = shop_bills[0]
@@ -192,7 +198,7 @@ def export_bill_excel(shop_name):
     worksheet.write("H4", first_bill["Date"], cell)
     
     # ============================================================
-    # TABLE HEADER - SAME AS COLAB
+    # TABLE HEADER
     # ============================================================
     
     row = 6
@@ -205,7 +211,7 @@ def export_bill_excel(shop_name):
     row += 1
     
     # ============================================================
-    # WRITE BILL DATA - SAME AS COLAB
+    # WRITE BILL DATA
     # ============================================================
     
     gross_total = 0
@@ -230,7 +236,7 @@ def export_bill_excel(shop_name):
         row += 1
     
     # ============================================================
-    # TOTAL ROW - SAME AS COLAB
+    # TOTAL ROW
     # ============================================================
     
     worksheet.write(row, 2, "TOTAL", total)
@@ -251,7 +257,7 @@ def export_bill_excel(shop_name):
     return output
 
 # ============================================================
-# EXPORT LOAD FORM - COLAB FORMAT
+# EXPORT LOAD FORM - FULL SIZE
 # ============================================================
 
 def export_load_form_excel(booker):
@@ -259,7 +265,6 @@ def export_load_form_excel(booker):
     if not booker_bills:
         return None
     
-    # Create summary - Same as Colab
     summary = {}
     for bill in booker_bills:
         code = bill["Code"]
@@ -275,37 +280,40 @@ def export_load_form_excel(booker):
     worksheet = workbook.add_worksheet("Load Form")
     
     # ============================================================
-    # FORMATS - SAME AS COLAB
+    # FORMATS
     # ============================================================
     
     title = workbook.add_format({
         "bold": True,
-        "font_size": 16,
+        "font_size": 18,
         "align": "center",
         "border": 2
     })
     
     header = workbook.add_format({
         "bold": True,
+        "font_size": 14,
         "bg_color": "#D9EAD3",
         "align": "center",
         "border": 2
     })
     
     cell = workbook.add_format({
+        "font_size": 14,
         "border": 1,
         "align": "center"
     })
     
     total = workbook.add_format({
         "bold": True,
+        "font_size": 14,
         "bg_color": "#FFF2CC",
         "align": "center",
         "border": 2
     })
     
-    worksheet.set_column("A:A", 40)
-    worksheet.set_column("B:B", 12)
+    worksheet.set_column("A:A", 60)  # Product - Full width
+    worksheet.set_column("B:B", 15)  # Boxes
     
     worksheet.merge_range("A1:B1", COMPANY_NAME, title)
     
