@@ -19,60 +19,60 @@ COMPANY_NAME = "AL-BARAKAH ENTERPRISES"
 DATA_FILE = "billing_database.json"
 
 # ============================================================
-# PRODUCT LIST (51 Products)
+# PRODUCT LIST (51 Products) - ALPHABETICAL ORDER
 # ============================================================
 
-PRODUCTS = [
+PRODUCTS = sorted([
+    {"code":"51","name":"BOOMZ LIQUID MANGO","price":135},
+    {"code":"4","name":"BADAM DELIGHT CANDY BOX","price":125},
+    {"code":"25","name":"BADAM CONE BOX","price":208},
+    {"code":"42","name":"CHOCO BITE CRUSHED PEANUT","price":210},
+    {"code":"36","name":"CHOKOZO CHOCOLATE","price":135},
+    {"code":"35","name":"CHOKOZO STRAWBERRY","price":135},
+    {"code":"38","name":"CHOCOFY CHOCOLATE","price":135},
+    {"code":"37","name":"CHOCOFY STRAWBERRY","price":135},
+    {"code":"29","name":"CHOCOLATE CONE","price":208},
+    {"code":"11","name":"CHOCOLATE CONE WITH PEANUT CHUNKS","price":263},
+    {"code":"45","name":"COCONUT WAALA","price":145},
+    {"code":"7","name":"CRISPEE WAFER ORANGE","price":130},
+    {"code":"6","name":"CRISPEE WAFER BANANA","price":130},
+    {"code":"8","name":"CRISPEE WAFER STRAWBERRY","price":130},
+    {"code":"17","name":"CUP CAKE CHOCOLATE","price":215},
+    {"code":"41","name":"DONUT CAKE","price":220},
+    {"code":"24","name":"FISHU BIG CHOCO STICK","price":180},
+    {"code":"43","name":"HEART BROWMIES","price":215},
+    {"code":"34","name":"JIM JAM","price":145},
+    {"code":"5","name":"KHATU APPLE CANDY","price":400},
+    {"code":"13","name":"KIDS JOY EGG CHOCOLATE WITH BISCUIT","price":445},
+    {"code":"12","name":"KOKO MASTI CHOCOLATE TUBE","price":210},
+    {"code":"16","name":"KOKO MASTI MILK CREAM TUBE","price":210},
+    {"code":"14","name":"KOKO MASTI STRAWBERRY TUBE","price":210},
+    {"code":"27","name":"KULFI PISTA MILKY LOLLIPOP BOX","price":130},
+    {"code":"10","name":"LUSH STAR CHOC. HAZELNUT","price":270},
+    {"code":"47","name":"MAGIC LOLLY POP","price":133},
+    {"code":"44","name":"MAKHAN WAALA","price":140},
+    {"code":"39","name":"MAKHAN BADAMI 10","price":215},
+    {"code":"40","name":"MAKHAN BADAMI TOFFEE","price":138},
+    {"code":"33","name":"MAX GUAVA 3-D JELLY","price":205},
+    {"code":"19","name":"MAX STRAWBERRY 3-D JELLY","price":205},
+    {"code":"18","name":"MELLOW JOY MANGO MARSHMALLOW","price":206},
+    {"code":"26","name":"MICKEY POP FRUITY BOX","price":137},
+    {"code":"9","name":"MINI CONE STRAWBERRY","price":225},
+    {"code":"3","name":"MINT GUM CENTER FILLED COATED BUBBLE","price":208},
+    {"code":"28","name":"NUT KHAT CHOCOLATE","price":130},
+    {"code":"23","name":"O-MILK NATURAL OAT ENERGY","price":215},
     {"code":"1","name":"OKAY CHOCOLATE VANILLA LAYER CAKE","price":215},
     {"code":"2","name":"OKAY STRAWBERRY VANILLA LAYER CAKE","price":215},
-    {"code":"3","name":"MINT GUM CENTER FILLED COATED BUBBLE","price":208},
-    {"code":"4","name":"BADAM DELIGHT CANDY BOX","price":125},
-    {"code":"5","name":"KHATU APPLE CANDY","price":400},
-    {"code":"6","name":"CRISPEE WAFER BANANA","price":130},
-    {"code":"7","name":"CRISPEE WAFER ORANGE","price":130},
-    {"code":"8","name":"CRISPEE WAFER STRAWBERRY","price":130},
-    {"code":"9","name":"MINI CONE STRAWBERRY","price":225},
-    {"code":"10","name":"LUSH STAR CHOC. HAZELNUT","price":270},
-    {"code":"11","name":"CHOCOLATE CONE WITH PEANUT CHUNKS","price":263},
-    {"code":"12","name":"KOKO MASTI CHOCOLATE TUBE","price":210},
-    {"code":"13","name":"KIDS JOY EGG CHOCOLATE WITH BISCUIT","price":445},
-    {"code":"14","name":"KOKO MASTI STRAWBERRY TUBE","price":210},
+    {"code":"46","name":"PANDA SPONGE CAKE","price":215},
+    {"code":"49","name":"ROLLEX WAFER CHOCOLATE","price":215},
+    {"code":"48","name":"ROLLEX WAFER STRAWBERRY","price":215},
+    {"code":"30","name":"STRAWBERRY CONE","price":208},
     {"code":"15","name":"STRAWBERRY FLAVORED CONE BOX","price":208},
-    {"code":"16","name":"KOKO MASTI MILK CREAM TUBE","price":210},
-    {"code":"17","name":"CUP CAKE CHOCOLATE","price":215},
-    {"code":"18","name":"MELLOW JOY MANGO MARSHMALLOW","price":206},
-    {"code":"19","name":"MAX STRAWBERRY 3-D JELLY","price":205},
     {"code":"20","name":"SUPREME SOFT CAKE","price":215},
     {"code":"21","name":"SWISS ROLL CAKE STRAWBERRY","price":215},
     {"code":"22","name":"SWISS ROLL CAKE CHOCOLATE","price":215},
-    {"code":"23","name":"O-MILK NATURAL OAT ENERGY","price":215},
-    {"code":"24","name":"FISHU BIG CHOCO STICK","price":180},
-    {"code":"25","name":"BADAM CONE BOX","price":208},
-    {"code":"26","name":"MICKEY POP FRUITY BOX","price":137},
-    {"code":"27","name":"KULFI PISTA MILKY LOLLIPOP BOX","price":130},
-    {"code":"28","name":"NUT KHAT CHOCOLATE","price":130},
-    {"code":"29","name":"CHOCOLATE CONE","price":208},
-    {"code":"30","name":"STRAWBERRY CONE","price":208},
-    {"code":"33","name":"MAX GUAVA 3-D JELLY","price":205},
-    {"code":"34","name":"JIM JAM","price":145},
-    {"code":"35","name":"CHOKOZO STRAWBERRY","price":135},
-    {"code":"36","name":"CHOKOZO CHOCOLATE","price":135},
-    {"code":"37","name":"CHOCOFY STRAWBERRY","price":135},
-    {"code":"38","name":"CHOCOFY CHOCOLATE","price":135},
-    {"code":"39","name":"MAKHAN BADAMI 10","price":215},
-    {"code":"40","name":"MAKHAN BADAMI TOFFEE","price":138},
-    {"code":"41","name":"DONUT CAKE","price":220},
-    {"code":"42","name":"CHOCO BITE CRUSHED PEANUT","price":210},
-    {"code":"43","name":"HEART BROWMIES","price":215},
-    {"code":"44","name":"MAKHAN WAALA","price":140},
-    {"code":"45","name":"COCONUT WAALA","price":145},
-    {"code":"46","name":"PANDA SPONGE CAKE","price":215},
-    {"code":"47","name":"MAGIC LOLLY POP","price":133},
-    {"code":"48","name":"ROLLEX WAFER STRAWBERRY","price":215},
-    {"code":"49","name":"ROLLEX WAFER CHOCOLATE","price":215},
-    {"code":"50","name":"YUMMY DONUT STRAWBERRY","price":218},
-    {"code":"51","name":"BOOMZ LIQUID MANGO","price":135}
-]
+    {"code":"50","name":"YUMMY DONUT STRAWBERRY","price":218}
+], key=lambda x: x["name"])
 
 # ============================================================
 # DATABASE FUNCTIONS
@@ -89,7 +89,6 @@ def init_session():
         else:
             st.session_state.database = {"next_bill_no": 1, "bills": []}
     
-    # Store selected products with quantities
     if 'selected_products' not in st.session_state:
         st.session_state.selected_products = {}
     
@@ -106,7 +105,7 @@ def save_database():
         return False
 
 # ============================================================
-# EXCEL EXPORT - SAME FORMAT AS BEFORE
+# EXCEL EXPORT - SAME FORMAT
 # ============================================================
 
 def export_bill_excel(shop_name, bills_data):
@@ -299,7 +298,7 @@ def export_load_form_excel(booker, bills_data):
     return output
 
 # ============================================================
-# CSS
+# CSS - WITH ENTER KEY SUPPORT FOR CHECKBOX
 # ============================================================
 
 def add_css():
@@ -322,21 +321,24 @@ def add_css():
         height: 48px !important;
     }
     
-    /* Product table styling */
+    /* Checkbox styling */
+    .stCheckbox label {
+        font-size: 18px !important;
+    }
+    
+    .stCheckbox input[type="checkbox"] {
+        width: 20px !important;
+        height: 20px !important;
+        cursor: pointer !important;
+    }
+    
+    /* When checkbox is checked - green */
+    .stCheckbox input[type="checkbox"]:checked {
+        accent-color: #28a745 !important;
+    }
+    
     .product-table {
         font-size: 14px !important;
-    }
-    
-    .product-table th {
-        background-color: #D9EAD3 !important;
-        font-weight: bold !important;
-        text-align: center !important;
-        padding: 8px !important;
-    }
-    
-    .product-table td {
-        padding: 6px !important;
-        border: 1px solid #ddd !important;
     }
     
     .grand-total {
@@ -357,7 +359,38 @@ def add_css():
         font-size: 24px !important;
         font-weight: bold !important;
     }
+    
+    /* Enter key hint for checkbox */
+    .enter-hint {
+        font-size: 13px !important;
+        color: #666;
+        background: #f0f0f0;
+        padding: 4px 10px;
+        border-radius: 4px;
+        display: inline-block;
+        margin: 2px;
+    }
     </style>
+    
+    <!-- JavaScript for Enter key on checkbox -->
+    <script>
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            var active = document.activeElement;
+            if (active && active.type === 'checkbox') {
+                e.preventDefault();
+                active.checked = !active.checked;
+                active.dispatchEvent(new Event('change'));
+            }
+        }
+    });
+    </script>
+    
+    <div style="background: #f8f9fa; padding: 8px 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; border: 1px solid #ddd;">
+        <span class="enter-hint">↵ Enter = Tick/Untick Checkbox</span>
+        <span class="enter-hint">↹ Tab = Next Field</span>
+        <span class="enter-hint">Space = Tick/Untick</span>
+    </div>
     """, unsafe_allow_html=True)
 
 # ============================================================
@@ -401,15 +434,13 @@ def main():
         order_booker = st.text_input("📝 Booker:", placeholder="Enter Order Booker", key="booker_input")
     
     # ============================================================
-    # PRODUCT TABLE - NEW DESIGN
+    # PRODUCT TABLE
     # ============================================================
     
-    st.markdown("### 📋 Select Products")
+    st.markdown("### 📋 Select Products (Alphabetical Order)")
     
-    # Create columns for table
     col1, col2, col3, col4, col5 = st.columns([0.5, 3, 1.5, 1.5, 2])
     
-    # Headers
     with col1:
         st.markdown("**✅**")
     with col2:
@@ -423,18 +454,14 @@ def main():
     
     st.markdown("---")
     
-    # Initialize grand total
     grand_total = 0
     
-    # Display each product with checkbox and quantity
     for idx, product in enumerate(PRODUCTS):
-        # Create a unique key for each product
         key_prefix = f"p_{product['code']}"
         
         col1, col2, col3, col4, col5 = st.columns([0.5, 3, 1.5, 1.5, 2])
         
         with col1:
-            # Checkbox - Green tick when selected
             selected = st.checkbox(
                 "", 
                 key=f"select_{key_prefix}",
@@ -469,10 +496,6 @@ def main():
                 grand_total += total
             else:
                 st.markdown("₹0.00")
-    
-    # ============================================================
-    # GRAND TOTAL
-    # ============================================================
     
     st.markdown("---")
     
@@ -510,7 +533,6 @@ def main():
     
     with col1:
         if st.button("➕ Add Bill", use_container_width=True, type="primary"):
-            # Get selected products with quantities
             selected_items = []
             for idx, product in enumerate(PRODUCTS):
                 key_prefix = f"p_{product['code']}"
@@ -532,7 +554,6 @@ def main():
             elif order_booker.strip() == "":
                 st.error("❌ Please enter Booker name")
             else:
-                # Create bill entries
                 for item in selected_items:
                     bill = {
                         "Bill No": st.session_state.database["next_bill_no"],
@@ -557,7 +578,6 @@ def main():
                 st.success(f"✅ Bill Added Successfully! Bill No: {st.session_state.database['next_bill_no'] - 1}")
                 st.balloons()
                 
-                # Reset selections
                 for idx, product in enumerate(PRODUCTS):
                     key_prefix = f"p_{product['code']}"
                     st.session_state.selected_products[f"select_{key_prefix}"] = False
@@ -643,6 +663,9 @@ def main():
     st.markdown(f"""
     <div style="text-align: center; color: #666; font-size: 15px;">
         <p>📦 Products: {len(PRODUCTS)} | 🧾 Bills: {len(st.session_state.database['bills'])} | 📌 Next Bill: {st.session_state.database['next_bill_no']}</p>
+        <p style="font-size: 13px; margin-top: 5px;">
+            ⌨️ Enter = Tick/Untick Checkbox | Tab = Next Field | Space = Tick/Untick
+        </p>
     </div>
     """, unsafe_allow_html=True)
 
