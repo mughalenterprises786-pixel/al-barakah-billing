@@ -7,6 +7,7 @@ from datetime import datetime
 st.set_page_config(page_title="AL-BARAKAH ENTERPRISES - Billing", layout="wide")
 
 COMPANY_NAME = "AL-BARAKAH ENTERPRISES"
+
 DATA_FILE = "billing_database.json"
 
 PRODUCTS = [
